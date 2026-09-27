@@ -1,0 +1,126 @@
+{
+  "eval_file": "eval/soliton-heldout.yaml",
+  "retrieval_only": true,
+  "rows": [
+    {
+      "id": "h01",
+      "question": "How long is a Sui wallet sign-in challenge valid before it expires?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h02",
+      "question": "How many epochs does the Walrus HTTP store keep a blob for by default?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h03",
+      "question": "How is the tree root fingerprint of a memory commit computed?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h04",
+      "question": "How are memory records turned into a commit graph with nodes and edges?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h05",
+      "question": "What happens to the head commit when a memory branch is forked?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h06",
+      "question": "Which URL paths does the proxy treat as protected and require a signed-in user for?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h07",
+      "question": "How does the app decide which onboarding step a user still has to complete?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h08",
+      "question": "How is an uploaded CSV file turned into a markdown table for the wiki?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h09",
+      "question": "What limits are enforced on the number and total size of wiki attachments?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "h10",
+      "question": "What does the payload look like when a token quota update is published to Redis?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "hu1",
+      "question": "Where are Stripe webhook events handled?",
+      "answerable": false,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "hu2",
+      "question": "Which Terraform module provisions the Postgres database?",
+      "answerable": false,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    }
+  ],
+  "summary": {
+    "retrieval_hit_file": [
+      0,
+      10
+    ],
+    "retrieval_hit_lines": [
+      0,
+      10
+    ],
+    "avg_latency_s": 0.0
+  },
+  "date": "2026-09-27"
+}
