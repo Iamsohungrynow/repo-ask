@@ -7,6 +7,9 @@ those chunks only, and every citation is checked against the chunks that were ac
 If there is no supported answer it prints `Not found in this repo` instead of guessing. The whole
 tool is about 670 lines of Python plus about 450 lines of tests.
 
+Built with [Claude Code](https://claude.com/claude-code) as a pair programmer: Claude Code wrote
+most of the code, tests and evaluation questions to my specification.
+
 ## Install
 
 ```bash
@@ -71,8 +74,9 @@ Add `--retrieval-only` to skip the answer step and run without an API key.
 The target is [Soliton](https://github.com/iamsohungrynow/Soliton), commit `9f01a58`, cloned
 read-only. The eval file [`eval/soliton.yaml`](eval/soliton.yaml) has 20 answerable questions with
 expected files and line ranges, plus 3 questions that have no answer in the repo. Questions 1-5
-are the seed questions; 6-20 were drafted by reading the code. Every expected range was checked
-against the code, and three questions accept a second location (marked `also`).
+are the seed questions; 6-20 were drafted with Claude Code by reading the code. Every expected
+range starts and ends on the definition it names, and three questions accept a second location
+(marked `also`).
 
 - **hit@6 (file)**: an expected file is among the 6 retrieved chunks.
 - **hit@6 (lines)**: a retrieved chunk overlaps an expected line range, which is stricter.
@@ -150,7 +154,7 @@ a prompt instruction the model may ignore. Rejected citations are reported on st
   incremental update.
 - **The stemmer is naive** (`walrus` becomes `walru`). This is consistent between queries and
   documents, but crude.
-- **The eval set is small.** 20 + 3 questions from one repo, drafted by the tool's author, with
+- **The eval set is small.** 20 + 3 questions from one repo, drafted with Claude Code, with
   no held-out split.
 
 ## Scaling to a large Java monorepo, and measuring whether it helps
