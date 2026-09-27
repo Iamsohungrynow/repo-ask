@@ -47,24 +47,32 @@ The `retrieved` lines come from `--show-chunks`. The answer itself is the valida
 followed by the indented answer, or `Not found in this repo`.
 
 ```text
-$ repo-ask eval eval/soliton.yaml --repo ../soliton --retrieval-only
+$ repo-ask eval eval/soliton.yaml --repo ../soliton --out eval/results/2026-09-27-full.json
 id   hit@6  lines  answer   latency  question
-q01  yes    yes    -          0.00s  Where is the memory recall API route?
+q01  yes    yes    yes        3.74s  Where is the memory recall API route?
 ...
-q17  no     no     -          0.00s  How does the app decide whether a user is an admin?
+q17  no     no     no         2.73s  How does the app decide whether a user is an admin?
+...
+u1   -      -      yes        2.30s  Where does the Kafka consumer process trade events?
 ...
 retrieval hit@6 (file):   18/20 = 90%
 retrieval hit@6 (lines):  13/20 = 65%
-answer / abstention:      not run (--retrieval-only)
+answer accuracy:          13/20 = 65%
+abstention accuracy:      3/3 = 100%
+rejected citations:       0
+errors:                   0
+average latency:          3.29 s
 ```
+
+Add `--retrieval-only` to skip the answer step and run without an API key.
 
 ## Evaluation
 
 The target is [Soliton](https://github.com/iamsohungrynow/Soliton), commit `9f01a58`, cloned
 read-only. The eval file [`eval/soliton.yaml`](eval/soliton.yaml) has 20 answerable questions with
 expected files and line ranges, plus 3 questions that have no answer in the repo. Questions 1-5
-are the seed questions; 6-20 were drafted by reading the code. Every expected answer still needs
-a human check, and the entries marked `alt` need the author's sign-off.
+are the seed questions; 6-20 were drafted by reading the code. Every expected range was checked
+against the code, and three questions accept a second location (marked `also`).
 
 - **hit@6 (file)**: an expected file is among the 6 retrieved chunks.
 - **hit@6 (lines)**: a retrieved chunk overlaps an expected line range, which is stricter.
