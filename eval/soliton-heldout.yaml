@@ -3,7 +3,7 @@
 # ever run. Nothing in the retriever may be tuned on these questions; they only report numbers.
 #
 # The questions cover code the development set (soliton.yaml) does not touch. Line ranges were
-# read from that commit and start and end on the definition they name.
+# read from that commit; each answers its question and starts and ends on the definition it names.
 # h01-h10 are answerable; hu1 and hu2 have no answer in the repo.
 
 repo_commit: 9f01a58cecc47df23aa6fe491ab43996a8e71be6

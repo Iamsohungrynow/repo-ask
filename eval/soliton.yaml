@@ -1,6 +1,6 @@
 # Evaluation set for https://github.com/iamsohungrynow/Soliton at commit 9f01a58.
-# Line ranges were read from that commit by hand. Each range was re-checked against the code:
-# it starts and ends on the definition it names.
+# Line ranges were read from that commit by hand. Each range was then checked against the code:
+# it answers its question, and it starts and ends on the definition it names.
 #
 # An answer counts as correct if one of its validated citations is in an expected file and
 # overlaps that file's expected line range. `expected` lists every location that is a correct
@@ -37,7 +37,6 @@ questions:
     question: Which memory providers does the adapter support?
     expected:
       - {path: engine/memory/index.ts, lines: [23, 37]}  # providerStores: memwal, walrus_http, local
-      - {path: engine/memory/types.ts, lines: [12, 12]}  # also: MemoryProvider union type
 
   - id: q06
     question: How is the memory namespace for a project built?
