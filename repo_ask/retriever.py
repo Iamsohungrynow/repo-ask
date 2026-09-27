@@ -14,6 +14,8 @@ from .chunker import Chunk
 
 TOP_K = 6
 RRF_K = 60  # standard Reciprocal Rank Fusion constant
+MAX_DOCS = 2  # at most this many prose chunks in the top k
+DOC_SUFFIXES = (".md", ".mdx", ".rst", ".txt")
 
 # A ranker maps a question to chunk ids, best first. Embeddings would be one more ranker.
 Ranker = Callable[[str], list[int]]
@@ -77,8 +79,16 @@ class Retriever:
         for ranker in self.rankers:
             for rank, i in enumerate(ranker(question)):
                 scores[i] += 1 / (RRF_K + rank + 1)
-        best = sorted(scores, key=lambda i: (-scores[i], i))[:k]
-        return [self.chunks[i] for i in best]
+        picked, docs = [], 0
+        for i in sorted(scores, key=lambda i: (-scores[i], i)):
+            is_doc = self.chunks[i].path.endswith(DOC_SUFFIXES)
+            if is_doc and docs >= MAX_DOCS:
+                continue  # prose mentions everything; don't let it crowd out code
+            docs += is_doc
+            picked.append(self.chunks[i])
+            if len(picked) == k:
+                break
+        return picked
 
     def bm25(self, question: str) -> list[int]:
         tokens = tokenize(question)
