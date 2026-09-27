@@ -1,0 +1,69 @@
+# Held-out evaluation set for https://github.com/iamsohungrynow/Soliton at commit 9f01a58.
+# Written after the retrieval tuning described in the README, and committed before this set was
+# ever run. Nothing in the retriever may be tuned on these questions; they only report numbers.
+#
+# The questions cover code the development set (soliton.yaml) does not touch. Line ranges were
+# read from that commit and start and end on the definition they name.
+# h01-h10 are answerable; hu1 and hu2 have no answer in the repo.
+
+repo_commit: 9f01a58cecc47df23aa6fe491ab43996a8e71be6
+questions:
+  - id: h01
+    question: How long is a Sui wallet sign-in challenge valid before it expires?
+    expected:
+      - {path: lib/sui-wallet.ts, lines: [27, 29]}  # suiWalletChallengeExpiresAt
+      - {path: lib/sui-wallet.ts, lines: [7, 7]}  # also: WALLET_CHALLENGE_TTL_MS = 10 minutes
+
+  - id: h02
+    question: How many epochs does the Walrus HTTP store keep a blob for by default?
+    expected:
+      - {path: engine/memory/walrus-http.ts, lines: [35, 39]}  # defaultEpochs, WALRUS_DEFAULT_EPOCHS or 2
+
+  - id: h03
+    question: How is the tree root fingerprint of a memory commit computed?
+    expected:
+      - {path: engine/memory/vcs/tree.ts, lines: [13, 18]}  # treeRoot
+
+  - id: h04
+    question: How are memory records turned into a commit graph with nodes and edges?
+    expected:
+      - {path: engine/memory/vcs/dag.ts, lines: [106, 150]}  # buildCommitDag
+
+  - id: h05
+    question: What happens to the head commit when a memory branch is forked?
+    expected:
+      - {path: engine/memory/vcs/branch.ts, lines: [16, 18]}  # forkBranch
+
+  - id: h06
+    question: Which URL paths does the proxy treat as protected and require a signed-in user for?
+    expected:
+      - {path: src/proxy.ts, lines: [30, 47]}  # isProtectedAppPath
+
+  - id: h07
+    question: How does the app decide which onboarding step a user still has to complete?
+    expected:
+      - {path: lib/onboarding.ts, lines: [46, 78]}  # getRequiredOnboardingStep
+
+  - id: h08
+    question: How is an uploaded CSV file turned into a markdown table for the wiki?
+    expected:
+      - {path: lib/wiki-attachments.ts, lines: [200, 219]}  # csvToMarkdown
+
+  - id: h09
+    question: What limits are enforced on the number and total size of wiki attachments?
+    expected:
+      - {path: lib/wiki-attachments.ts, lines: [522, 549]}  # convertWikiAttachments
+      - {path: lib/wiki-attachments.ts, lines: [8, 10]}  # also: MAX_ATTACHMENTS and byte limits
+
+  - id: h10
+    question: What does the payload look like when a token quota update is published to Redis?
+    expected:
+      - {path: lib/token-quota-redis.ts, lines: [270, 300]}  # publishTokenQuotaUpdate
+
+  - id: hu1
+    question: Where are Stripe webhook events handled?
+    answerable: false
+
+  - id: hu2
+    question: Which Terraform module provisions the Postgres database?
+    answerable: false
