@@ -41,9 +41,10 @@ $ repo-ask ask "where does the runner fall back to keyword recall?" --repo ../so
 ANTHROPIC_API_KEY is not set.
 ```
 
-The answer step has **not been run yet**: the environment this was built in had no API key. The
-output format is `path:start-end` lines followed by the indented answer, or `Not found in this repo`.
-Real answer output goes here after the first keyed run.
+The answer step has **not been run yet**: the environments this was built and evaluated in had no
+API key, and a re-run on 2026-09-27 printed exactly the output above. The output format is
+`path:start-end` lines followed by the indented answer, or `Not found in this repo`. Real answer
+output goes here after the first keyed run.
 
 ```text
 $ repo-ask eval eval/soliton.yaml --repo ../soliton --retrieval-only
@@ -75,13 +76,15 @@ Run on 2026-09-27 (per-question results in [`eval/results/`](eval/results/)):
 
 | Configuration | hit@6 (file) | hit@6 (lines) | Answer accuracy | Abstention | Avg latency |
 |---|---|---|---|---|---|
-| **Hybrid: BM25 + ripgrep (default)** | **18/20 (90%)** | **13/20 (65%)** | not run yet | not run yet | not run yet |
+| **Hybrid: BM25 + ripgrep (default)** | **18/20 (90%)** | **13/20 (65%)** | run failed: `ANTHROPIC_API_KEY is not set.` | run failed | run failed |
 | BM25 only (`--no-rg`) | 18/20 (90%) | 14/20 (70%) | – | – | – |
 | ripgrep only (`--no-bm25`) | 2/20 (10%) | 0/20 (0%) | – | – | – |
 
-The answer-accuracy, abstention and latency columns need an API key. They will be filled in from
-`repo-ask eval eval/soliton.yaml --repo ../soliton --out eval/results/<date>-full.json` exactly as
-printed, and a failed run will be reported as a failure.
+The answer-accuracy, abstention and latency columns need an API key. The full run on 2026-09-27,
+`repo-ask eval eval/soliton.yaml --repo ../soliton --out eval/results/2026-09-27-full.json`, printed
+only `ANTHROPIC_API_KEY is not set.` and exited with status 1 before answering any question, so it
+produced no numbers and wrote no results file. These columns will be filled in exactly as printed
+from the first run with a key.
 
 **How these numbers were reached.** The questions were committed before any tuning (commit
 `6319687`). Two changes were then made after looking at results on this same set, so the numbers
