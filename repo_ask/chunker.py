@@ -49,6 +49,7 @@ DEFINITIONS = {
 }
 # `const f = () => {...}` and multi-line config objects: definitions only when multi-line.
 DECLARATIONS = {"lexical_declaration", "variable_declaration"}
+COMMENTS = {"comment", "line_comment", "block_comment"}
 
 
 @dataclass
@@ -92,7 +93,7 @@ def chunk_file(path: Path, rel: str) -> list[Chunk]:
     if language is not None:
         tree = ts.Parser(language).parse(data)
         for node, symbol in _definitions(tree.root_node):
-            start, end = node.start_point[0] + 1, node.end_point[0] + 1
+            start, end = _start_row(node) + 1, node.end_point[0] + 1
             if node.end_point[1] == 0 and end > start:
                 end -= 1  # node ends at column 0 of the next line
             chunks.extend(_windows(rel, lines, start, end, symbol, node.type, MAX_DEF_LINES))
@@ -122,6 +123,19 @@ def _definitions(node: ts.Node, prefix: str = ""):
             yield from nested  # lines of the parent outside its children become windows
         else:
             yield child, symbol
+
+
+def _start_row(node: ts.Node) -> int:
+    """First row of a definition, extended upward over the comments directly above it (doc comments)."""
+    if node.parent is not None and node.parent.type == "export_statement":
+        node = node.parent
+    row, prev = node.start_point[0], node.prev_named_sibling
+    while prev is not None and prev.type in COMMENTS and prev.end_point[0] >= row - 1:
+        before = prev.prev_named_sibling
+        if before is not None and before.end_point[0] >= prev.start_point[0]:
+            break  # trailing comment on another statement's line
+        row, prev = prev.start_point[0], before
+    return row
 
 
 def _is_definition(node: ts.Node) -> bool:
