@@ -5,7 +5,7 @@ answer with `file:start-end` citations. It splits the repo into function- and cl
 with tree-sitter and retrieves the most relevant ones with BM25 plus ripgrep. Claude answers from
 those chunks only, and every citation is checked against the chunks that were actually retrieved.
 If there is no supported answer it prints `Not found in this repo` instead of guessing. The whole
-tool is about 670 lines of Python plus about 450 lines of tests.
+tool is about 670 lines of Python plus about 460 lines of tests.
 
 Built with [Claude Code](https://claude.com/claude-code) as a pair programmer: Claude Code wrote
 most of the code, tests and evaluation questions to my specification.
@@ -76,7 +76,7 @@ read-only. The eval file [`eval/soliton.yaml`](eval/soliton.yaml) has 20 answera
 expected files and line ranges, plus 3 questions that have no answer in the repo. Questions 1-5
 are the seed questions; 6-20 were drafted with Claude Code by reading the code. Every expected
 range starts and ends on the definition it names, and three questions accept a second location
-(marked `also`).
+(marked `also`). A separate held-out set is described [below](#held-out-set).
 
 - **hit@6 (file)**: an expected file is among the 6 retrieved chunks.
 - **hit@6 (lines)**: a retrieved chunk overlaps an expected line range, which is stricter.
@@ -101,7 +101,7 @@ have no answer columns.
 
 **How these numbers were reached.** The questions were committed before any tuning (commit
 `6319687`). Two changes were then made after looking at results on this same set, so the numbers
-above are optimistic. There is no held-out set yet.
+above are optimistic; the held-out set below is the check on that.
 
 | Stage | Hybrid file | Hybrid lines |
 |---|---|---|
@@ -115,6 +115,41 @@ the hybrid scored *worse* than BM25 alone. On this eval set ripgrep still adds n
 the 20 questions contain an identifier. On q04 ("MemWal") it pushes the defining chunk out of the
 top 6, because `MemWal` appears in 76 chunks. The unit tests show the case where it does
 help: an identifier query returns the defining chunk first.
+
+### Held-out set
+
+[`eval/soliton-heldout.yaml`](eval/soliton-heldout.yaml) has 10 answerable and 2 unanswerable
+questions about parts of Soliton the development set does not touch (Sui wallet challenges, the
+Walrus HTTP store, memory branches and commit graphs, the auth proxy, onboarding, wiki attachments,
+token quota events). It was written after all the tuning above and committed before it was first
+run, and nothing has been tuned on it since.
+
+| Configuration | hit@6 (file) | hit@6 (lines) |
+|---|---|---|
+| **Hybrid: BM25 + ripgrep (default)** | **9/10 (90%)** | **9/10 (90%)** |
+| BM25 only (`--no-rg`) | 9/10 (90%) | 9/10 (90%) |
+| ripgrep only (`--no-bm25`) | 0/10 (0%) | 0/10 (0%) |
+
+These are retrieval-only numbers; the answer step has not been run on this set yet. Retrieval
+held up: file hit@6 is the same as on the development set. The line score is higher (90% against
+65%), but that more likely means these questions are easier than that retrieval generalises
+better. They were drafted with Claude Code by someone who knew how the retriever works, so their
+wording follows the code closely. The one miss, h07 ("which onboarding step a user still has to
+complete"), fails the same way as q17.
+
+**A tried fix that did not work.** q17 and q18 looked like a short-chunk bias, so BM25 length
+normalisation was made configurable (`--bm25-b`, default 0.75) and swept on the development set
+only:
+
+| BM25 `b` | 1.0 | 0.9 | **0.75** | 0.6 | 0.5 | 0.4 | 0.3 | 0.2 | 0 |
+|---|---|---|---|---|---|---|---|---|---|
+| Hybrid file | 18/20 | 18/20 | **18/20** | 16/20 | 15/20 | 15/20 | 14/20 | 14/20 | 10/20 |
+| Hybrid lines | 12/20 | 13/20 | **13/20** | 12/20 | 12/20 | 12/20 | 11/20 | 11/20 | 8/20 |
+
+No value is better than the default, and q17 and q18 miss at every value, so the default stays.
+The real cause is different: the question's words ("admin", "user") are also in the paths and
+symbol names of many small admin route handlers (`src/app/api/admin/users/...`), and path and
+symbol are counted twice, so those chunks outrank `isAdminUser` whatever their length.
 
 ## Design choices
 
@@ -143,9 +178,10 @@ a prompt instruction the model may ignore. Rejected citations are reported on st
 
 ## Limitations
 
-- **BM25 favours short chunks.** Tiny near-duplicate route handlers, such as a 5-line admin guard
-  repeated in 5 files, outrank the one function that matters (q17, q18). This was left unfixed so
-  as not to tune on the eval set.
+- **Common words in paths drown out the right function.** Small route handlers whose paths repeat
+  the question's words ("admin", "user") outrank the one function that answers it (q17, q18, h07).
+  Changing BM25 length normalisation does not help (see the sweep above). Down-weighting path
+  tokens might, but it has not been tried.
 - **Only files are evaluated, not answer text.** A citation in the right place with a wrong
   explanation still counts as correct.
 - **A citation is valid only if it fits in one chunk.** A correct answer spanning two adjacent
@@ -154,8 +190,9 @@ a prompt instruction the model may ignore. Rejected citations are reported on st
   incremental update.
 - **The stemmer is naive** (`walrus` becomes `walru`). This is consistent between queries and
   documents, but crude.
-- **The eval set is small.** 20 + 3 questions from one repo, drafted with Claude Code, with
-  no held-out split.
+- **The eval sets are small.** 20 + 3 development and 10 + 2 held-out questions from one repo,
+  drafted with Claude Code rather than collected from real users. The held-out set has retrieval
+  numbers only.
 
 ## Scaling to a large Java monorepo, and measuring whether it helps
 
