@@ -10,7 +10,7 @@ from pathlib import Path
 from .answer import answer_question
 from .evaluate import format_report, run_eval, save
 from .index import build_index, load_index
-from .retriever import Retriever
+from .retriever import BM25_B, Retriever
 
 
 def load_retriever(repo: Path, **options) -> Retriever:
@@ -41,6 +41,8 @@ def main(argv: list[str] | None = None) -> None:
     evaluate.add_argument("--retrieval-only", action="store_true", help="skip the LLM; score retrieval only")
     evaluate.add_argument("--no-bm25", action="store_true", help="ablation: disable BM25")
     evaluate.add_argument("--no-rg", action="store_true", help="ablation: disable ripgrep")
+    evaluate.add_argument("--bm25-b", type=float, default=BM25_B,
+                          help=f"BM25 length normalisation, 0-1 (default {BM25_B})")
     evaluate.add_argument("--out", type=Path, help="write per-question results as JSON")
 
     args = parser.parse_args(argv)
@@ -62,7 +64,8 @@ def main(argv: list[str] | None = None) -> None:
             print(f"(rejected citations outside the retrieved code: {rejected})", file=sys.stderr)
 
     elif args.command == "eval":
-        retriever = load_retriever(args.repo, use_bm25=not args.no_bm25, use_rg=not args.no_rg)
+        retriever = load_retriever(args.repo, use_bm25=not args.no_bm25, use_rg=not args.no_rg,
+                                   bm25_b=args.bm25_b)
         result = run_eval(args.eval_file, retriever, retrieval_only=args.retrieval_only)
         result["date"] = date.today().isoformat()
         print(format_report(result))

@@ -100,3 +100,8 @@ def test_extra_ranker_is_fused(repo):
     billing = next(i for i, c in enumerate(chunks) if c.symbol == "fetchSuiUsdPrice")
     retriever = Retriever(repo, chunks, use_bm25=False, use_rg=False, extra_rankers=(lambda q: [billing],))
     assert retriever.search("anything")[0].symbol == "fetchSuiUsdPrice"
+
+
+def test_bm25_length_normalisation_is_configurable(repo):
+    assert Retriever(repo, chunk_repo(repo), use_rg=False)._bm25.b == 0.75
+    assert Retriever(repo, chunk_repo(repo), use_rg=False, bm25_b=0.3)._bm25.b == 0.3

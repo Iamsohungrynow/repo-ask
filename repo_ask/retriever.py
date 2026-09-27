@@ -15,6 +15,7 @@ from .chunker import Chunk
 TOP_K = 6
 RRF_K = 60  # standard Reciprocal Rank Fusion constant
 MAX_DOCS = 2  # at most this many prose chunks in the top k
+BM25_B = 0.75  # length normalisation: 0 ignores chunk length, 1 fully penalises long chunks
 DOC_SUFFIXES = (".md", ".mdx", ".rst", ".txt")
 
 # A ranker maps a question to chunk ids, best first. Embeddings would be one more ranker.
@@ -62,7 +63,7 @@ def identifiers(question: str) -> list[str]:
 
 class Retriever:
     def __init__(self, repo: Path, chunks: list[Chunk], use_bm25=True, use_rg=True,
-                 extra_rankers: tuple[Ranker, ...] = ()):
+                 extra_rankers: tuple[Ranker, ...] = (), bm25_b: float = BM25_B):
         self.repo, self.chunks = repo, chunks
         self.by_path = defaultdict(list)
         for i, c in enumerate(chunks):
@@ -72,7 +73,7 @@ class Retriever:
         if use_bm25:
             # Path and symbol are repeated so a name match outweighs a passing mention in the body.
             docs = [tokenize(f"{c.path} {c.symbol} {c.symbol} {c.text}") for c in chunks]
-            self._bm25 = BM25Okapi(docs)
+            self._bm25 = BM25Okapi(docs, b=bm25_b)
 
     def search(self, question: str, k: int = TOP_K) -> list[Chunk]:
         """Fuse all rankings with Reciprocal Rank Fusion; return the top k distinct chunks."""
