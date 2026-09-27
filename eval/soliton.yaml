@@ -1,0 +1,127 @@
+# Evaluation set for https://github.com/iamsohungrynow/Soliton at commit 9f01a58.
+# Line ranges were read from that commit by hand. Every entry needs a human check (Martina)
+# before its numbers are trusted.
+#
+# An answer counts as correct if one of its validated citations is in an expected file and
+# overlaps that file's expected line range. `expected` lists every location that is a correct
+# answer; entries marked "alt" were added while drafting, before any run, and need your sign-off.
+#
+# Questions 1-5 are the seed questions from the brief; 6-20 were drafted by reading the repo.
+# u1-u3 have no answer in the repo: the tool must reply "Not found in this repo".
+
+repo_commit: 9f01a58cecc47df23aa6fe491ab43996a8e71be6
+questions:
+  - id: q01
+    question: Where is the memory recall API route?
+    expected:
+      - {path: src/app/api/memory/recall/route.ts, lines: [21, 65]}
+
+  - id: q02
+    question: Where does recall fall back to Postgres records when the provider returns nothing?
+    expected:
+      - {path: engine/memory/records.ts, lines: [275, 313]}  # fallbackRecallFromRecords
+      - {path: src/app/api/memory/recall/route.ts, lines: [49, 60]}  # alt: where the fallback is chosen
+
+  - id: q03
+    question: How many memories does the agent runner recall before a task, and where?
+    expected:
+      - {path: engine/memory/runner.mjs, lines: [616, 644]}  # recallRunnerTaskMemory, limit = 5
+
+  - id: q04
+    question: Where is MemWal's recall called?
+    expected:
+      - {path: engine/memory/memwal.ts, lines: [100, 108]}  # recallMemory
+      - {path: engine/memory/runner.mjs, lines: [187, 199]}  # alt: recallMemWalMemory also calls memwal.recall
+
+  - id: q05
+    question: Which memory providers does the adapter support?
+    expected:
+      - {path: engine/memory/index.ts, lines: [23, 37]}  # providerStores: memwal, walrus_http, local
+      - {path: engine/memory/types.ts, lines: [12, 12]}  # alt: MemoryProvider union type
+
+  - id: q06
+    question: How is the memory namespace for a project built?
+    expected:
+      - {path: engine/memory/namespace.ts, lines: [13, 15]}
+
+  - id: q07
+    question: How is memory content hashed?
+    expected:
+      - {path: engine/memory/hash.ts, lines: [7, 9]}
+
+  - id: q08
+    question: How is a memory commit id computed?
+    expected:
+      - {path: engine/memory/vcs/commit.ts, lines: [21, 36]}
+
+  - id: q09
+    question: How are commit payloads serialized deterministically so the same commit always gets the same id?
+    expected:
+      - {path: engine/memory/vcs/canonical.ts, lines: [8, 27]}
+
+  - id: q10
+    question: Where does the agent runner put recovered memories into the task prompt?
+    expected:
+      - {path: engine/agents/runner.mjs, lines: [132, 197]}  # recoveredMemoryBlock + taskPrompt
+
+  - id: q11
+    question: Which agent providers are available and which environment flags enable them?
+    expected:
+      - {path: engine/agents/providers.ts, lines: [11, 43]}
+
+  - id: q12
+    question: How is a Solana wallet signature verified?
+    expected:
+      - {path: lib/solana-wallet.ts, lines: [121, 140]}
+
+  - id: q13
+    question: Where does billing get the SUI to USD price from?
+    expected:
+      - {path: lib/sui-billing.ts, lines: [115, 135]}  # Binance SUIUSDT ticker
+
+  - id: q14
+    question: How is a USD amount converted into SOL lamports for a payment quote?
+    expected:
+      - {path: lib/solana-billing.ts, lines: [96, 101]}
+
+  - id: q15
+    question: How is a wiki slug generated from a title?
+    expected:
+      - {path: lib/wiki.ts, lines: [72, 81]}
+
+  - id: q16
+    question: Which wiki file paths are rejected as invalid?
+    expected:
+      - {path: lib/wiki.ts, lines: [83, 98]}
+
+  - id: q17
+    question: How does the app decide whether a user is an admin?
+    expected:
+      - {path: lib/admin.ts, lines: [41, 70]}
+
+  - id: q18
+    question: Where is the ?next= redirect path validated to prevent open redirects?
+    expected:
+      - {path: lib/url.ts, lines: [4, 10]}
+
+  - id: q19
+    question: Where is the on-chain memory commit object created in the Move contract?
+    expected:
+      - {path: move/soliton_receipt/sources/memory_commit.move, lines: [42, 77]}
+
+  - id: q20
+    question: Which providers are allowed in the walrus_memory_records table?
+    expected:
+      - {path: supabase/migrations/0020_sui_walrus_memory.sql, lines: [43, 70]}
+
+  - id: u1
+    question: Where does the Kafka consumer process trade events?
+    answerable: false
+
+  - id: u2
+    question: Where is the Kubernetes Helm chart for deploying the web app?
+    answerable: false
+
+  - id: u3
+    question: Which function retrains the fraud-detection model with PyTorch?
+    answerable: false
