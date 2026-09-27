@@ -48,12 +48,14 @@ def tokenize(text: str) -> list[str]:
     return tokens
 
 
-def identifiers(question: str, symbols: set[str]) -> list[str]:
-    """Words in the question that look like code: `quoted`, camelCase, snake_case or a known symbol."""
+def identifiers(question: str) -> list[str]:
+    """Words in the question that are clearly code: `quoted`, camelCase or snake_case.
+
+    Plain words are left to BM25: matching them against symbol names turned "project" or
+    "prompt" into ripgrep searches that flooded the ranking."""
     found = set(re.findall(r"`([^`\s]+)`", question))
     for word in WORD.findall(question):
-        camel = re.search(r"[a-z][A-Z]", word)
-        if camel or "_" in word.strip("_") or (word in symbols and len(word) > 3):
+        if re.search(r"[a-z][A-Z]", word) or "_" in word.strip("_"):
             found.add(word)
     return sorted(found)
 
@@ -62,7 +64,6 @@ class Retriever:
     def __init__(self, repo: Path, chunks: list[Chunk], use_bm25=True, use_rg=True,
                  extra_rankers: tuple[Ranker, ...] = ()):
         self.repo, self.chunks = repo, chunks
-        self.symbols = {c.symbol.split(".")[-1] for c in chunks if c.symbol}
         self.by_path = defaultdict(list)
         for i, c in enumerate(chunks):
             self.by_path[c.path].append(i)
@@ -99,7 +100,7 @@ class Retriever:
         return [i for i in ranked[: TOP_K * 5] if scores[i] > 0]
 
     def ripgrep(self, question: str) -> list[int]:
-        names = identifiers(question, self.symbols)
+        names = identifiers(question)
         if not names:
             return []
         patterns = [arg for name in names for arg in ("-e", name)]
@@ -111,16 +112,18 @@ class Retriever:
             return []  # ripgrep is a booster; BM25 still works without it
 
         matched: dict[int, set[str]] = defaultdict(set)
+        lines: dict[int, int] = defaultdict(int)
         for line in out.splitlines():
             path, number, text = (line.split(":", 2) + ["", ""])[:3]
             i = self._chunk_at(path.removeprefix("./"), int(number) if number.isdigit() else 0)
             if i is not None:  # None: file is not indexed (vendored, lockfile, binary)
                 matched[i].update(name for name in names if name in text)
+                lines[i] += 1
 
         def rank(i: int):
-            # The chunk that defines an identifier beats chunks that only use it.
+            # Defining an identifier beats using it; then more distinct identifiers; then more lines.
             defines = self.chunks[i].symbol.split(".")[-1] in matched[i]
-            return (not defines, -len(matched[i]), i)
+            return (not defines, -len(matched[i]), -lines[i], i)
 
         return sorted(matched, key=rank)[: TOP_K * 5]
 
