@@ -1,0 +1,293 @@
+{
+  "eval_file": "eval/soliton-heldout.yaml",
+  "retrieval_only": false,
+  "rows": [
+    {
+      "id": "h01",
+      "question": "How long is a Sui wallet sign-in challenge valid before it expires?",
+      "answerable": true,
+      "retrieved": [
+        "lib/sui-wallet.ts:27-29",
+        "src/app/api/wallet/challenge/route.ts:38-94",
+        "frontend/components/wallet/workspace-wallet-onboarding.tsx:191-214",
+        "lib/solana-wallet.ts:99-101",
+        "supabase/migrations/0022_sui_wallet_identity_challenges.sql:1-16",
+        "src/app/api/wallet/verify/route.ts:80-109"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": false,
+      "citations": [],
+      "rejected": [],
+      "correct": false,
+      "latency_s": 3.62
+    },
+    {
+      "id": "h02",
+      "question": "How many epochs does the Walrus HTTP store keep a blob for by default?",
+      "answerable": true,
+      "retrieved": [
+        "engine/memory/runner.mjs:245-289",
+        "engine/memory/walrus-http.ts:4-29",
+        "engine/memory/walrus-http.ts:59-165",
+        "engine/memory/walrus-http.ts:35-39",
+        "docs/architecture/sui-walrus-memory.md:161-240",
+        "engine/memory/runner.mjs:110-114"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "engine/memory/walrus-http.ts:35-39",
+        "engine/memory/runner.mjs:110-114"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 2.42
+    },
+    {
+      "id": "h03",
+      "question": "How is the tree root fingerprint of a memory commit computed?",
+      "answerable": true,
+      "retrieved": [
+        "engine/memory/vcs/tree.ts:9-18",
+        "move/soliton_receipt/sources/memory_commit.move:1-80",
+        "docs/soliton-memory-vcs-SPEC.md:1-79",
+        "engine/memory/vcs/sui.ts:30-41",
+        "src/app/api/memory/commit/confirm/route.ts:40-65",
+        "move/soliton_receipt/sources/memory_commit.move:81-101"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "engine/memory/vcs/tree.ts:9-18",
+        "docs/soliton-memory-vcs-SPEC.md:64-71"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 3.47
+    },
+    {
+      "id": "h04",
+      "question": "How are memory records turned into a commit graph with nodes and edges?",
+      "answerable": true,
+      "retrieved": [
+        "engine/memory/vcs/dag.ts:101-150",
+        "engine/memory/vcs/dag.ts:44-51",
+        "engine/memory/vcs/dag.ts:1-9",
+        "engine/memory/vcs/dag.ts:53-57",
+        "ops/scripts/backfill-wiki-graph.mjs:1107-1135",
+        "docs/soliton-memory-vcs-SPEC.md:81-112"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "engine/memory/vcs/dag.ts:106-149"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 3.27
+    },
+    {
+      "id": "h05",
+      "question": "What happens to the head commit when a memory branch is forked?",
+      "answerable": true,
+      "retrieved": [
+        "engine/memory/vcs/branch.ts:7-10",
+        "engine/memory/vcs/branch.ts:12-18",
+        "engine/memory/vcs/index.ts:51-58",
+        "engine/memory/vcs/auto.ts:56-107",
+        "engine/memory/vcs/types.ts:43-47",
+        "engine/memory/runner.mjs:386-440"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "engine/memory/vcs/branch.ts:12-18"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 2.88
+    },
+    {
+      "id": "h06",
+      "question": "Which URL paths does the proxy treat as protected and require a signed-in user for?",
+      "answerable": true,
+      "retrieved": [
+        "src/proxy.ts:117-180",
+        "src/proxy.ts:30-47",
+        "docs/operations/ai-credits.md:1-80",
+        "legacy/openclaw-runtime/server/openclaw-ssh.js:1-14",
+        "src/proxy.ts:1-5",
+        "src/app/admin/mfa/page.tsx:23-64"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "src/proxy.ts:30-47",
+        "src/proxy.ts:133-137"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 3.13
+    },
+    {
+      "id": "h07",
+      "question": "How does the app decide which onboarding step a user still has to complete?",
+      "answerable": true,
+      "retrieved": [
+        "src/app/onboarding/page.tsx:1-26",
+        "src/app/onboarding/page.tsx:176-278",
+        "src/app/api/onboarding/route.ts:1-7",
+        "src/app/auth/callback/route.ts:1-12",
+        "src/app/onboarding/page.tsx:98-120",
+        "lib/wiki-server.ts:1-9"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "found": true,
+      "citations": [
+        "src/app/onboarding/page.tsx:210-228"
+      ],
+      "rejected": [],
+      "correct": false,
+      "latency_s": 2.81
+    },
+    {
+      "id": "h08",
+      "question": "How is an uploaded CSV file turned into a markdown table for the wiki?",
+      "answerable": true,
+      "retrieved": [
+        "engine/openclaw.ts:1751-1784",
+        "lib/wiki-attachments.ts:330-479",
+        "lib/wiki-attachments.ts:14-21",
+        "lib/wiki-attachments.ts:200-219",
+        "engine/openclaw.ts:1201-1229",
+        "frontend/components/wiki-editor.tsx:64-83"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "lib/wiki-attachments.ts:427-444",
+        "lib/wiki-attachments.ts:200-219"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 3.61
+    },
+    {
+      "id": "h09",
+      "question": "What limits are enforced on the number and total size of wiki attachments?",
+      "answerable": true,
+      "retrieved": [
+        "lib/wiki-attachments.ts:522-549",
+        "src/app/dashboard/wiki/page.tsx:90-96",
+        "lib/wiki-attachments.ts:14-21",
+        "lib/wiki-attachments.ts:74-93",
+        "src/app/dashboard/wiki/page.tsx:189-196",
+        "lib/wiki-attachments.ts:1-12"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "lib/wiki-attachments.ts:8-10",
+        "lib/wiki-attachments.ts:532-540"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 3.42
+    },
+    {
+      "id": "h10",
+      "question": "What does the payload look like when a token quota update is published to Redis?",
+      "answerable": true,
+      "retrieved": [
+        "lib/token-quota-redis.ts:270-300",
+        "lib/token-quota-redis.ts:10-19",
+        "docs/operations/ai-credits.md:161-214",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:51-53",
+        "lib/token-quota-redis.ts:1-8",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:563-595"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "found": true,
+      "citations": [
+        "lib/token-quota-redis.ts:270-300",
+        "lib/token-quota-redis.ts:10-19",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:563-595"
+      ],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 4.46
+    },
+    {
+      "id": "hu1",
+      "question": "Where are Stripe webhook events handled?",
+      "answerable": false,
+      "retrieved": [
+        "frontend/components/reveal-on-scroll.tsx:5-49",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:605-619",
+        "engine/memory/vcs/sui.ts:130-135",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:597-603",
+        "engine/memory/vcs/sui.ts:205-297",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:621-678"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "found": false,
+      "citations": [],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 1.87
+    },
+    {
+      "id": "hu2",
+      "question": "Which Terraform module provisions the Postgres database?",
+      "answerable": false,
+      "retrieved": [
+        "engine/memory/vcs/dag.ts:1-9",
+        "supabase/config.toml:1-80",
+        "legacy/openclaw-runtime/components/ssh-console-panel.tsx:12-12",
+        "legacy/openclaw-runtime/components/ssh-console-panel.tsx:13-13",
+        "legacy/deploy/railway/Dockerfile:1-79",
+        "tsconfig.json:1-56"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "found": false,
+      "citations": [],
+      "rejected": [],
+      "correct": true,
+      "latency_s": 2.44
+    }
+  ],
+  "summary": {
+    "retrieval_hit_file": [
+      9,
+      10
+    ],
+    "retrieval_hit_lines": [
+      9,
+      10
+    ],
+    "avg_latency_s": 3.12,
+    "answer_accuracy": [
+      8,
+      10
+    ],
+    "abstention_accuracy": [
+      2,
+      2
+    ],
+    "errors": 0,
+    "rejected_citations": 0
+  },
+  "date": "2026-09-27"
+}
