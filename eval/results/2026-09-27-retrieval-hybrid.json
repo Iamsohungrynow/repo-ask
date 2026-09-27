@@ -1,0 +1,386 @@
+{
+  "eval_file": "eval/soliton.yaml",
+  "retrieval_only": true,
+  "rows": [
+    {
+      "id": "q01",
+      "question": "Where is the memory recall API route?",
+      "answerable": true,
+      "retrieved": [
+        "docs/implementation/sui-walrus-build-plan.md:641-720",
+        "src/app/api/memory/recall/route.ts:1-7",
+        "docs/implementation/sui-walrus-build-plan.md:722-800",
+        "frontend/components/memory/verifiable-memory-panel.tsx:125-162",
+        "src/app/api/memory/recall/route.ts:21-65",
+        "src/app/api/memory/recall/route.ts:9-19"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q02",
+      "question": "Where does recall fall back to Postgres records when the provider returns nothing?",
+      "answerable": true,
+      "retrieved": [
+        "src/app/page.tsx:31-59",
+        "engine/memory/index.ts:60-138",
+        "engine/memory/records.ts:275-313",
+        "src/app/api/memory/recall/route.ts:21-65",
+        "legacy/openclaw-runtime/server/custom-server.js:15-34",
+        "src/app/dashboard/page.tsx:67-77"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q03",
+      "question": "How many memories does the agent runner recall before a task, and where?",
+      "answerable": true,
+      "retrieved": [
+        "docs/implementation/sui-walrus-build-plan.md:561-639",
+        "engine/memory/runner.mjs:616-644",
+        "docs/implementation/sui-walrus-build-plan.md:961-1040",
+        "lib/memory-graph-note.ts:40-74",
+        "engine/agents/runner.mjs:1-9",
+        "engine/memory/runner.mjs:576-584"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q04",
+      "question": "Where is MemWal's recall called?",
+      "answerable": true,
+      "retrieved": [
+        "docs/implementation/sui-walrus-build-plan.md:961-1040",
+        "docs/implementation/sui-walrus-build-plan.md:1042-1120",
+        "engine/memory/preflight.mjs:139-220",
+        "engine/memory/preflight.mjs:98-127",
+        "engine/memory/runner.mjs:138-160",
+        "engine/memory/memwal.ts:21-41"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.01
+    },
+    {
+      "id": "q05",
+      "question": "Which memory providers does the adapter support?",
+      "answerable": true,
+      "retrieved": [
+        "docs/soliton-memory-vcs-SPEC.md:81-112",
+        "src/app/page.tsx:31-59",
+        "move/soliton_receipt/sources/memory_receipt.move:1-79",
+        "README.md:1-80",
+        "engine/memory/types.ts:56-61",
+        "engine/memory/index.ts:6-9"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q06",
+      "question": "How is the memory namespace for a project built?",
+      "answerable": true,
+      "retrieved": [
+        "engine/memory/namespace.ts:13-15",
+        "engine/memory/runner.mjs:26-28",
+        "src/app/api/memory/recall/route.ts:9-19",
+        "engine/memory/runner.mjs:646-664",
+        "engine/memory/runner.mjs:616-644",
+        "engine/memory/runner.mjs:586-610"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q07",
+      "question": "How is memory content hashed?",
+      "answerable": true,
+      "retrieved": [
+        "engine/memory/vcs/types.ts:35-41",
+        "docs/soliton-memory-vcs-design.md:81-132",
+        "engine/memory/hash.ts:11-13",
+        "src/app/dashboard/graph/commits/page.tsx:180-236",
+        "engine/memory/local.ts:4-52",
+        "engine/memory/hash.ts:7-9"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q08",
+      "question": "How is a memory commit id computed?",
+      "answerable": true,
+      "retrieved": [
+        "move/soliton_receipt/sources/memory_commit.move:81-101",
+        "engine/memory/vcs/commit.ts:38-41",
+        "move/soliton_receipt/sources/memory_commit.move:1-80",
+        "engine/memory/vcs/index.ts:1-42",
+        "engine/memory/records.ts:96-220",
+        "frontend/components/memory/auto-commit-wallet-agent.tsx:259-269"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q09",
+      "question": "How are commit payloads serialized deterministically so the same commit always gets the same id?",
+      "answerable": true,
+      "retrieved": [
+        "docs/soliton-memory-vcs-SPEC.md:1-79",
+        "engine/memory/vcs/canonical.ts:1-10",
+        "engine/memory/vcs/commit.ts:16-36",
+        "engine/memory/vcs/commit.ts:38-41",
+        "engine/memory/vcs/index.ts:60-82",
+        "engine/memory/vcs/types.ts:35-41"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q10",
+      "question": "Where does the agent runner put recovered memories into the task prompt?",
+      "answerable": true,
+      "retrieved": [
+        "engine/agents/runner.mjs:175-197",
+        "lib/memory-graph-note.ts:40-74",
+        "docs/implementation/sui-walrus-build-plan.md:561-639",
+        "docs/architecture/sui-walrus-memory.md:1-80",
+        "engine/agents/runner.mjs:226-249",
+        "engine/memory/runner.mjs:646-664"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.01
+    },
+    {
+      "id": "q11",
+      "question": "Which agent providers are available and which environment flags enable them?",
+      "answerable": true,
+      "retrieved": [
+        "engine/agents/providers.ts:5-9",
+        "engine/agents/providers.ts:11-43",
+        "engine/agents/runner.mjs:54-56",
+        "engine/agents/runner.mjs:48-52",
+        "docs/architecture/sui-walrus-memory.md:242-320",
+        "README.md:161-239"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q12",
+      "question": "How is a Solana wallet signature verified?",
+      "answerable": true,
+      "retrieved": [
+        "src/app/api/wallet/verify/route.ts:111-115",
+        "src/app/api/wallet/verify/route.ts:117-122",
+        "src/app/api/wallet/verify/route.ts:143-150",
+        "lib/solana-wallet.ts:121-140",
+        "shared/types/solana-wallet.d.ts:8-15",
+        "lib/solana-wallet.ts:103-119"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q13",
+      "question": "Where does billing get the SUI to USD price from?",
+      "answerable": true,
+      "retrieved": [
+        "lib/sui-billing.ts:144-164",
+        "lib/sui-billing.ts:137-142",
+        "lib/sui-billing.ts:115-135",
+        "ops/scripts/sui-billing-reconcile.mjs:161-170",
+        "src/app/api/billing/sui/estimate/route.ts:39-73",
+        "lib/solana-billing.ts:96-101"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q14",
+      "question": "How is a USD amount converted into SOL lamports for a payment quote?",
+      "answerable": true,
+      "retrieved": [
+        "supabase/migrations/0015_solana_credit_purchases.sql:161-240",
+        "lib/solana-payment-history.ts:72-100",
+        "lib/solana-billing.ts:96-101",
+        "lib/solana-payment-history.ts:7-8",
+        "supabase/migrations/0015_solana_credit_purchases.sql:241-296",
+        "supabase/migrations/0015_solana_credit_purchases.sql:1-80"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q15",
+      "question": "How is a wiki slug generated from a title?",
+      "answerable": true,
+      "retrieved": [
+        "supabase/migrations/0010_projects_multi_wiki_registry.sql:1-24",
+        "src/app/api/projects/route.ts:313-321",
+        "ops/scripts/backfill-wiki-graph.mjs:399-486",
+        "lib/wiki.ts:334-424",
+        "src/app/api/wiki/export/route.ts:7-28",
+        "src/app/api/wiki/tree/route.ts:7-28"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q16",
+      "question": "Which wiki file paths are rejected as invalid?",
+      "answerable": true,
+      "retrieved": [
+        "lib/wiki.ts:83-98",
+        "ops/scripts/backfill-wiki-graph.mjs:166-181",
+        "engine/openclaw.ts:2571-2615",
+        "engine/openclaw.ts:1657-1673",
+        "ops/scripts/backfill-wiki-graph.mjs:616-644",
+        "engine/openclaw.ts:2513-2569"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q17",
+      "question": "How does the app decide whether a user is an admin?",
+      "answerable": true,
+      "retrieved": [
+        "src/app/admin/page.tsx:109-113",
+        "supabase/migrations/0013_profile_settings.sql:1-15",
+        "src/app/api/admin/users/[userId]/access/route.ts:7-11",
+        "src/app/api/admin/users/[userId]/delete/route.ts:8-12",
+        "src/app/api/admin/users/[userId]/quota/route.ts:8-12",
+        "src/app/api/admin/users/[userId]/bedrock-token/route.ts:9-13"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q18",
+      "question": "Where is the ?next= redirect path validated to prevent open redirects?",
+      "answerable": true,
+      "retrieved": [
+        "src/app/api/openclaw/provision/route.ts:23-32",
+        "src/app/api/openclaw/telegram-pair/route.ts:15-24",
+        "src/app/api/projects/route.ts:54-62",
+        "src/app/api/onboarding/route.ts:19-105",
+        "src/app/auth/callback/route.ts:49-129",
+        "src/app/api/onboarding/route.ts:9-17"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q19",
+      "question": "Where is the on-chain memory commit object created in the Move contract?",
+      "answerable": true,
+      "retrieved": [
+        "docs/soliton-memory-vcs-SPEC.md:81-112",
+        "docs/soliton-memory-vcs-design.md:1-79",
+        "move/soliton_receipt/sources/memory_commit.move:1-80",
+        "frontend/lib/memory-commit-anchor.ts:1-27",
+        "engine/memory/vcs/sui.ts:70-72",
+        "engine/memory/vcs/sui.ts:205-297"
+      ],
+      "hit_file": true,
+      "hit_lines": true,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q20",
+      "question": "Which providers are allowed in the walrus_memory_records table?",
+      "answerable": true,
+      "retrieved": [
+        "supabase/migrations/0020_sui_walrus_memory.sql:162-216",
+        "docs/implementation/sui-walrus-build-plan.md:241-320",
+        "supabase/migrations/0020_sui_walrus_memory.sql:81-160",
+        "README.md:321-399",
+        "src/app/api/memory/preflight/route.ts:7-29",
+        ".env.walrus.example:81-108"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.01
+    },
+    {
+      "id": "u1",
+      "question": "Where does the Kafka consumer process trade events?",
+      "answerable": false,
+      "retrieved": [
+        "legacy/openclaw-runtime/server/token-usage-listener.js:821-853",
+        "engine/openclaw.ts:1901-1921",
+        "engine/openclaw.ts:41-44",
+        "src/app/api/settings/profile/route.ts:1-8",
+        ".env.walrus.example:81-108",
+        "legacy/openclaw-runtime/server/custom-server.js:62-67"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "u2",
+      "question": "Where is the Kubernetes Helm chart for deploying the web app?",
+      "answerable": false,
+      "retrieved": [
+        "frontend/components/settings-integrations.tsx:1-12",
+        "docs/operations/deployment.md:1-80",
+        "legacy/openclaw-runtime/server/openclaw-ssh.js:479-502",
+        "docs/operations/hermes-runtime.md:1-80",
+        "frontend/lib/sui-wallet-registry.ts:8-19",
+        "frontend/components/particle-lattice-background.tsx:5-21"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "u3",
+      "question": "Which function retrains the fraud-detection model with PyTorch?",
+      "answerable": false,
+      "retrieved": [
+        "engine/openclaw.ts:1786-1876",
+        "docs/soliton-memory-vcs-design.md:1-79",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:372-415",
+        "legacy/openclaw-runtime/server/token-usage-listener.js:563-595",
+        "engine/memory/vcs/commit.ts:16-36",
+        "docs/operations/hermes-runtime.md:81-117"
+      ],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.01
+    }
+  ],
+  "summary": {
+    "retrieval_hit_file": [
+      18,
+      20
+    ],
+    "retrieval_hit_lines": [
+      13,
+      20
+    ],
+    "avg_latency_s": 0.0
+  },
+  "date": "2026-09-27"
+}

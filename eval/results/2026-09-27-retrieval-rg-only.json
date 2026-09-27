@@ -1,0 +1,239 @@
+{
+  "eval_file": "eval/soliton.yaml",
+  "retrieval_only": true,
+  "rows": [
+    {
+      "id": "q01",
+      "question": "Where is the memory recall API route?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q02",
+      "question": "Where does recall fall back to Postgres records when the provider returns nothing?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q03",
+      "question": "How many memories does the agent runner recall before a task, and where?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q04",
+      "question": "Where is MemWal's recall called?",
+      "answerable": true,
+      "retrieved": [
+        "AGENTS.md:81-160",
+        "AGENTS.md:161-240",
+        "engine/memory/preflight.mjs:139-220",
+        "src/app/dashboard/memory/page.tsx:306-385",
+        ".env.walrus.example:1-79",
+        "engine/memory/memwal.ts:21-41"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.01
+    },
+    {
+      "id": "q05",
+      "question": "Which memory providers does the adapter support?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q06",
+      "question": "How is the memory namespace for a project built?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q07",
+      "question": "How is memory content hashed?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q08",
+      "question": "How is a memory commit id computed?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q09",
+      "question": "How are commit payloads serialized deterministically so the same commit always gets the same id?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q10",
+      "question": "Where does the agent runner put recovered memories into the task prompt?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q11",
+      "question": "Which agent providers are available and which environment flags enable them?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q12",
+      "question": "How is a Solana wallet signature verified?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q13",
+      "question": "Where does billing get the SUI to USD price from?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q14",
+      "question": "How is a USD amount converted into SOL lamports for a payment quote?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q15",
+      "question": "How is a wiki slug generated from a title?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q16",
+      "question": "Which wiki file paths are rejected as invalid?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q17",
+      "question": "How does the app decide whether a user is an admin?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q18",
+      "question": "Where is the ?next= redirect path validated to prevent open redirects?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q19",
+      "question": "Where is the on-chain memory commit object created in the Move contract?",
+      "answerable": true,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "q20",
+      "question": "Which providers are allowed in the walrus_memory_records table?",
+      "answerable": true,
+      "retrieved": [
+        "AGENTS.md:81-160",
+        "supabase/migrations/0020_sui_walrus_memory.sql:81-160",
+        "supabase/migrations/0020_sui_walrus_memory.sql:162-216",
+        "docs/implementation/sui-walrus-build-plan.md:241-320",
+        ".env.walrus.example:81-108",
+        "engine/memory/runner.mjs:386-440"
+      ],
+      "hit_file": true,
+      "hit_lines": false,
+      "latency_s": 0.01
+    },
+    {
+      "id": "u1",
+      "question": "Where does the Kafka consumer process trade events?",
+      "answerable": false,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "u2",
+      "question": "Where is the Kubernetes Helm chart for deploying the web app?",
+      "answerable": false,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.0
+    },
+    {
+      "id": "u3",
+      "question": "Which function retrains the fraud-detection model with PyTorch?",
+      "answerable": false,
+      "retrieved": [],
+      "hit_file": false,
+      "hit_lines": false,
+      "latency_s": 0.01
+    }
+  ],
+  "summary": {
+    "retrieval_hit_file": [
+      2,
+      20
+    ],
+    "retrieval_hit_lines": [
+      0,
+      20
+    ],
+    "avg_latency_s": 0.0
+  },
+  "date": "2026-09-27"
+}
