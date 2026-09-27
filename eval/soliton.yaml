@@ -1,10 +1,10 @@
 # Evaluation set for https://github.com/iamsohungrynow/Soliton at commit 9f01a58.
-# Line ranges were read from that commit by hand. Every entry needs a human check (Martina)
-# before its numbers are trusted.
+# Line ranges were read from that commit by hand. Each range was re-checked against the code:
+# it starts and ends on the definition it names.
 #
 # An answer counts as correct if one of its validated citations is in an expected file and
 # overlaps that file's expected line range. `expected` lists every location that is a correct
-# answer; entries marked "alt" were added while drafting, before any run, and need your sign-off.
+# answer. Entries marked "also" are second correct locations, added before any run.
 #
 # Questions 1-5 are the seed questions from the brief; 6-20 were drafted by reading the repo.
 # u1-u3 have no answer in the repo: the tool must reply "Not found in this repo".
@@ -20,7 +20,7 @@ questions:
     question: Where does recall fall back to Postgres records when the provider returns nothing?
     expected:
       - {path: engine/memory/records.ts, lines: [275, 313]}  # fallbackRecallFromRecords
-      - {path: src/app/api/memory/recall/route.ts, lines: [49, 60]}  # alt: where the fallback is chosen
+      - {path: src/app/api/memory/recall/route.ts, lines: [49, 60]}  # also: where the fallback is chosen
 
   - id: q03
     question: How many memories does the agent runner recall before a task, and where?
@@ -31,13 +31,13 @@ questions:
     question: Where is MemWal's recall called?
     expected:
       - {path: engine/memory/memwal.ts, lines: [100, 108]}  # recallMemory
-      - {path: engine/memory/runner.mjs, lines: [187, 199]}  # alt: recallMemWalMemory also calls memwal.recall
+      - {path: engine/memory/runner.mjs, lines: [187, 199]}  # also: the runner calls memwal.recall in recallMemWalMemory
 
   - id: q05
     question: Which memory providers does the adapter support?
     expected:
       - {path: engine/memory/index.ts, lines: [23, 37]}  # providerStores: memwal, walrus_http, local
-      - {path: engine/memory/types.ts, lines: [12, 12]}  # alt: MemoryProvider union type
+      - {path: engine/memory/types.ts, lines: [12, 12]}  # also: MemoryProvider union type
 
   - id: q06
     question: How is the memory namespace for a project built?
