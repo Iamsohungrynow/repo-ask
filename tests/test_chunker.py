@@ -1,3 +1,5 @@
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -136,6 +138,68 @@ def test_repo_walk_skips_vendored_generated_lockfiles_and_binaries(tmp_path):
     write(tmp_path, "Cargo.lock", "x\n")
     (tmp_path / "logo.png").write_bytes(b"\x89PNG\x00\x00binary")
     assert {c.path for c in chunk_repo(tmp_path)} == {"src/app.py"}
+
+
+requires_git = pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
+
+
+@pytest.fixture
+def no_parent_repo(tmp_path, monkeypatch):
+    """Stop git from finding a repository above tmp_path, so tmp_path is a plain directory."""
+    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path.parent))
+    return tmp_path
+
+
+def git(repo: Path, *args: str):
+    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)
+
+
+@requires_git
+def test_git_repo_skips_ignored_files_and_keeps_untracked_ones(no_parent_repo):
+    repo = no_parent_repo
+    git(repo, "init", "-q")
+    write(repo, ".gitignore", ".env\n*.egg-info/\nout/\n")
+    write(repo, "src/app.py", "def main():\n    pass\n")
+    write(repo, ".env", "ANTHROPIC_API_KEY=secret\n")
+    write(repo, "pkg.egg-info/PKG-INFO", "Name: pkg\n")
+    write(repo, "out/gen.py", "def gen():\n    pass\n")
+    git(repo, "add", ".gitignore", "src/app.py")
+    write(repo, "notes.md", "untracked but not ignored\n")
+    write(repo, "node_modules/lib/index.js", "function x() {}\n")  # skip rules still apply
+    files = [p.relative_to(repo).as_posix() for p in chunker.iter_files(repo)]
+    assert files == [".gitignore", "notes.md", "src/app.py"]
+
+
+@requires_git
+def test_git_repo_lists_files_in_walk_order(no_parent_repo):
+    repo = no_parent_repo
+    git(repo, "init", "-q")
+    for name in ["b.py", "a/z.py", "a/b/c.py", "a/a.py", "A.py"]:
+        write(repo, name, "x = 1\n")
+    files = [p.relative_to(repo).as_posix() for p in chunker.iter_files(repo)]
+    assert files == ["A.py", "b.py", "a/a.py", "a/z.py", "a/b/c.py"]
+    shutil.rmtree(repo / ".git")  # the os.walk fallback yields the same order
+    assert [p.relative_to(repo).as_posix() for p in chunker.iter_files(repo)] == files
+
+
+def test_non_git_directory_falls_back_to_walking(no_parent_repo):
+    repo = no_parent_repo
+    write(repo, ".gitignore", ".env\n")
+    write(repo, ".env", "KEY=1\n")
+    write(repo, "src/app.py", "def main():\n    pass\n")
+    write(repo, "dist/bundle.js", "function y() {}\n")
+    files = [p.relative_to(repo).as_posix() for p in chunker.iter_files(repo)]
+    assert files == [".env", ".gitignore", "src/app.py"]  # .gitignore is not read without git
+
+
+def test_missing_git_falls_back_to_walking(tmp_path, monkeypatch):
+    def no_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(chunker.subprocess, "run", no_git)
+    write(tmp_path, ".gitignore", ".env\n")
+    write(tmp_path, ".env", "KEY=1\n")
+    assert [p.name for p in chunker.iter_files(tmp_path)] == [".env", ".gitignore"]
 
 
 @pytest.mark.parametrize("name", ["a.js", "a.mjs", "a.tsx", "a.py", "a.rs", "A.java"])
