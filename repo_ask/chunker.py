@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -63,15 +64,46 @@ class Chunk:
 
 
 def iter_files(repo: Path):
-    """Yield indexable files under repo, sorted, skipping vendored, generated and binary files."""
-    for root, dirs, files in os.walk(repo):
-        dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
-        for name in sorted(files):
-            if name in SKIP_FILES or name.endswith(SKIP_SUFFIXES):
-                continue
-            path = Path(root) / name
-            if path.is_file() and not path.is_symlink():
-                yield path
+    """Yield indexable files under repo, sorted, skipping vendored, generated and binary files.
+
+    In a git work tree only files git would not ignore are considered (tracked plus untracked but
+    not ignored), so `.env`, build output and the like stay out of the index and out of prompts.
+    """
+    candidates = _git_files(repo)
+    if candidates is None:
+        candidates = _walk_files(repo)
+    for path in sorted(candidates, key=lambda p: _walk_order(p.relative_to(repo))):
+        rel = path.relative_to(repo)
+        if any(part in SKIP_DIRS for part in rel.parts[:-1]):
+            continue
+        if rel.name in SKIP_FILES or rel.name.endswith(SKIP_SUFFIXES):
+            continue
+        if path.is_file() and not path.is_symlink():
+            yield path
+
+
+def _git_files(repo: Path) -> list[Path] | None:
+    """Files git lists under repo, or None if git is missing or repo is not in a work tree."""
+    cmd = ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"]
+    try:
+        out = subprocess.run(cmd, cwd=repo, capture_output=True, check=True, timeout=60).stdout
+    except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return None
+    # Paths are relative to cwd; a path listed twice (e.g. during a merge conflict) is deduplicated.
+    return [repo / name for name in dict.fromkeys(os.fsdecode(n) for n in out.split(b"\0") if n)]
+
+
+def _walk_files(repo: Path) -> list[Path]:
+    files = []
+    for root, dirs, names in os.walk(repo):
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+        files.extend(Path(root) / name for name in names)
+    return files
+
+
+def _walk_order(rel: Path):
+    """Sort key giving os.walk order: a directory's own files first, then its subdirectories."""
+    return [(1, part) for part in rel.parts[:-1]] + [(0, rel.name)]
 
 
 def chunk_repo(repo: Path) -> list[Chunk]:
