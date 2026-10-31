@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 from .chunker import Chunk
 
@@ -72,6 +72,15 @@ class Answer:
         if not self.found:
             return NOT_FOUND
         return "\n".join([*map(str, self.citations), f"  {self.text}"])
+
+    def to_dict(self) -> dict:
+        """Machine-readable form for `repo-ask ask --json`."""
+        return {
+            "found": self.found,
+            "answer": self.text,
+            "citations": [asdict(c) for c in self.citations],
+            "rejected": [asdict(c) for c in self.rejected],
+        }
 
 
 def make_client():
