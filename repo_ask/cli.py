@@ -3,14 +3,22 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from datetime import date
 from pathlib import Path
 
+from . import __version__
 from .answer import answer_question
 from .evaluate import format_report, run_eval, save
 from .index import build_index, load_index
 from .retriever import BM25_B, Retriever
+
+EXAMPLES = """examples:
+  repo-ask index .
+  repo-ask ask "where are retries configured?"
+  repo-ask ask "what calls parseConfig?" --repo ../other-project --show-chunks
+  repo-ask eval my-questions.yaml --repo . --retrieval-only"""
 
 
 def load_retriever(repo: Path, **options) -> Retriever:
@@ -24,7 +32,13 @@ def load_retriever(repo: Path, **options) -> Retriever:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="repo-ask", description=__doc__)
+    parser = argparse.ArgumentParser(
+        prog="repo-ask",
+        description="Answer questions about a codebase with cited file:line ranges.",
+        epilog=EXAMPLES,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
 
     index = commands.add_parser("index", help="build the index for a repository")
@@ -34,6 +48,8 @@ def main(argv: list[str] | None = None) -> None:
     ask.add_argument("question")
     ask.add_argument("--repo", type=Path, default=Path("."))
     ask.add_argument("--show-chunks", action="store_true", help="print retrieved chunks to stderr")
+    ask.add_argument("--json", action="store_true", help="print the answer as JSON")
+    ask.add_argument("--model", help="Claude model id (default: $REPO_ASK_MODEL or claude-sonnet-5)")
 
     evaluate = commands.add_parser("eval", help="run an evaluation file")
     evaluate.add_argument("eval_file", type=Path)
@@ -43,6 +59,7 @@ def main(argv: list[str] | None = None) -> None:
     evaluate.add_argument("--no-rg", action="store_true", help="ablation: disable ripgrep")
     evaluate.add_argument("--bm25-b", type=float, default=BM25_B,
                           help=f"BM25 length normalisation, 0-1 (default {BM25_B})")
+    evaluate.add_argument("--model", help="Claude model id (default: $REPO_ASK_MODEL or claude-sonnet-5)")
     evaluate.add_argument("--out", type=Path, help="write per-question results as JSON")
 
     args = parser.parse_args(argv)
@@ -57,7 +74,10 @@ def main(argv: list[str] | None = None) -> None:
         if args.show_chunks:
             for c in chunks:
                 print(f"  retrieved {c.path}:{c.start_line}-{c.end_line} {c.symbol}", file=sys.stderr)
-        answer = answer_question(args.question, chunks)
+        answer = answer_question(args.question, chunks, model=args.model)
+        if args.json:
+            print(json.dumps(answer.to_dict(), indent=2))
+            return
         print(answer.render())
         if answer.rejected:
             rejected = ", ".join(map(str, answer.rejected))
@@ -66,7 +86,8 @@ def main(argv: list[str] | None = None) -> None:
     elif args.command == "eval":
         retriever = load_retriever(args.repo, use_bm25=not args.no_bm25, use_rg=not args.no_rg,
                                    bm25_b=args.bm25_b)
-        result = run_eval(args.eval_file, retriever, retrieval_only=args.retrieval_only)
+        result = run_eval(args.eval_file, retriever, retrieval_only=args.retrieval_only,
+                          model=args.model)
         result["date"] = date.today().isoformat()
         print(format_report(result))
         if args.out:
