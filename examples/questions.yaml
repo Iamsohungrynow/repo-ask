@@ -34,8 +34,8 @@ questions:
   - id: q4
     question: Which directories are skipped when walking a repository?
     expected:
-      - {path: repo_ask/chunker.py, lines: [20, 20]}  # SKIP_DIRS
-      - {path: repo_ask/chunker.py, lines: [65, 74]}  # iter_files
+      - {path: repo_ask/chunker.py, lines: [21, 21]}  # SKIP_DIRS
+      - {path: repo_ask/chunker.py, lines: [66, 82]}  # iter_files
 
   - id: u1
     question: Where does the web server check the user's password?

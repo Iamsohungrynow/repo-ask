@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/Claude-API-D97757?style=flat&logo=anthropic&logoColor=white" alt="Claude API" />
   <img src="https://img.shields.io/badge/tree--sitter-chunks-1F6FEB?style=flat" alt="tree-sitter chunks" />
   <img src="https://img.shields.io/badge/BM25-%2B%20ripgrep-6E40C9?style=flat" alt="BM25 plus ripgrep" />
-  <a href="https://github.com/iamsohungrynow/repo-ask/actions/workflows/tests.yml"><img src="https://github.com/iamsohungrynow/repo-ask/actions/workflows/tests.yml/badge.svg" alt="tests" /></a>
+  <a href="https://github.com/iamsohungrynow/repo-ask/actions/workflows/ci.yml"><img src="https://github.com/iamsohungrynow/repo-ask/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <img src="https://img.shields.io/badge/License-MIT-2E7D5B?style=flat" alt="MIT licence" />
 </p>
 
@@ -56,13 +56,13 @@ read these numbers as indicative.
 
 - **Cited answers:** each answer starts with the `path:start-end` ranges that support it.
 - **No guessing:** a reply with no citation inside the retrieved code becomes `Not found in this repo`.
-- **Any local checkout:** only the 6 retrieved chunks are sent to the Claude API.
+- **Any local checkout:** only the 6 retrieved chunks are sent to the Claude API, and in a git
+  repo anything `.gitignore` excludes, such as `.env`, is never indexed.
 - **Scripts and editors:** `--json` prints `{found, answer, citations, rejected}`.
 - **Measurable:** `repo-ask eval` scores retrieval and answers against your own questions, with or
   without an API key.
 
-Not yet: `.gitignore` support, incremental re-indexing, citations that span two chunks,
-embeddings. See the [roadmap](#roadmap).
+Not yet: incremental re-indexing, citations that span two chunks, embeddings. See the [roadmap](#roadmap).
 
 ## Quickstart
 
@@ -116,7 +116,8 @@ changes.
 **Languages.** Function- and class-level chunks for **Python, JavaScript, TypeScript (incl.
 JSX/TSX), Rust and Java**. Every other text file (Go, C, Markdown, YAML, config, ...) is indexed in
 80-line windows, so questions about it still work, with coarser citations. Vendored and generated
-files (`node_modules`, `dist`, lockfiles, minified JS, binaries) are skipped. To add a language,
+files (`node_modules`, `dist`, lockfiles, minified JS, binaries) are skipped, and so is anything
+`.gitignore` excludes. To add a language,
 install its `tree-sitter-<lang>` package and add its suffix and definition node types to
 [`repo_ask/chunker.py`](repo_ask/chunker.py).
 
@@ -199,7 +200,6 @@ Ordered by what the evaluation showed matters most.
 
 | Next | Why | Done when |
 | --- | --- | --- |
-| **Respect `.gitignore`** | ignored files such as `.env` can be indexed | an ignored file in a test repo is never indexed |
 | **Down-weight path tokens** | small `api/admin/users/...` handlers outrank `isAdminUser` (q17, q18, h07) | q17 and q18 hit with no held-out loss |
 | **Carry module constants into chunks** | a function is retrieved without the constant it reads (h01) | h01 answers "10 minutes" |
 | **Citations across adjacent chunks** | a correct answer spanning two chunks is rejected | a two-chunk citation validates |
@@ -210,5 +210,4 @@ Known failure modes and the experiments behind them are in
 
 ## Licence
 
-MIT ([`LICENSE`](LICENSE)). Built with [Claude Code](https://claude.com/claude-code) as a pair
-programmer: Claude Code wrote most of the code, tests and evaluation questions to my specification.
+MIT ([`LICENSE`](LICENSE)).
