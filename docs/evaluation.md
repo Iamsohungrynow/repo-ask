@@ -89,7 +89,7 @@ accuracy is limited by retrieval, not by the model. The ablation rows are retrie
 have no answer columns.
 
 **How these numbers were reached.** The questions were committed before any tuning (commit
-`6319687`). Two changes were then made after looking at results on this same set, so the numbers
+`aba5820`). Two changes were then made after looking at results on this same set, so the numbers
 above are optimistic; the held-out set below is the check on that.
 
 | Stage | Hybrid file | Hybrid lines |
