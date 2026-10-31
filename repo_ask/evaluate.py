@@ -20,7 +20,8 @@ def matches(path: str, start: int, end: int, expected: list[dict]) -> bool:
     return any(path == e["path"] and overlaps(start, end, *e["lines"]) for e in expected)
 
 
-def run_eval(eval_file: Path, retriever: Retriever, client=None, retrieval_only=False) -> dict:
+def run_eval(eval_file: Path, retriever: Retriever, client=None, retrieval_only=False,
+             model: str | None = None) -> dict:
     questions = yaml.safe_load(eval_file.read_text())["questions"]
     if not retrieval_only:
         client = client or make_client()  # fail fast if the key is missing
@@ -38,7 +39,7 @@ def run_eval(eval_file: Path, retriever: Retriever, client=None, retrieval_only=
         }
         if not retrieval_only:
             try:
-                answer = answer_question(q["question"], chunks, client=client)
+                answer = answer_question(q["question"], chunks, client=client, model=model)
                 row["found"] = answer.found
                 row["citations"] = [str(c) for c in answer.citations]
                 row["rejected"] = [str(c) for c in answer.rejected]

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 294" width="900" height="294">
+  <!-- Real repo-ask output on Soliton at commit 9f01a58, 2026-09-27. -->
+  <rect width="900" height="294" rx="12" fill="#14120F"/>
+  <rect width="900" height="40" rx="12" fill="#211E1A"/>
+  <rect y="28" width="900" height="12" fill="#211E1A"/>
+  <circle cx="24" cy="20" r="6" fill="#FF5F57"/><circle cx="44" cy="20" r="6" fill="#FEBC2E"/><circle cx="64" cy="20" r="6" fill="#28C840"/>
+  <text x="450.0" y="25" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#8C857B">repo-ask</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">
+    <text x="24" y="64"><tspan fill="#D97757">$</tspan><tspan fill="#F2F0E4"> repo-ask ask "where does the runner fall back to keyword recall?" --repo ../soliton</tspan></text>
+    <text x="24" y="86" fill="#7FD4A8">engine/memory/runner.mjs:616-644</text>
+    <text x="24" y="108" fill="#7FD4A8">engine/memory/runner.mjs:187-199</text>
+    <text x="41" y="130" fill="#CFC9BD">In `recallRunnerTaskMemory`, if the MemWal recall call fails or is unavailable,</text>
+    <text x="41" y="152" fill="#CFC9BD">the catch block returns an empty array, and the function then merges results with</text>
+    <text x="41" y="174" fill="#CFC9BD">`indexedProjectMemories`, which serves as the keyword/indexed fallback for recall</text>
+    <text x="41" y="196" fill="#CFC9BD">data (built from the task's title, kind, and payload via `taskRecallQuery`).</text>
+    <text x="24" y="240"><tspan fill="#D97757">$</tspan><tspan fill="#F2F0E4"> repo-ask ask "where does the Kafka consumer process trade events?" --repo ../soliton</tspan></text>
+    <text x="24" y="262" fill="#E8B04B">Not found in this repo</text>
+  </g>
+</svg>

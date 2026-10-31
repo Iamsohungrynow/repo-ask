@@ -31,6 +31,7 @@ class ScriptedClient:
         self.messages = self
 
     def create(self, **request):
+        self.model = request["model"]
         text = json.dumps(self.replies.pop(0))
         return SimpleNamespace(content=[SimpleNamespace(type="text", text=text)])
 
@@ -71,3 +72,11 @@ def test_retrieval_only_needs_no_client(tmp_path):
     result = run_eval(path, StubRetriever(), retrieval_only=True)
     assert "answer_accuracy" not in result["summary"]
     assert "not run" in format_report(result)
+
+
+def test_model_is_passed_through(tmp_path):
+    path = tmp_path / "eval.yaml"
+    path.write_text(EVAL)
+    client = ScriptedClient([{"answer": "no", "found": False, "citations": []}] * 3)
+    run_eval(path, StubRetriever(), client=client, model="my-model")
+    assert client.model == "my-model"

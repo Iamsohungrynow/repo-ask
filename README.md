@@ -1,241 +1,213 @@
-# repo-ask
+<p align="center">
+  <img src="./docs/assets/brand/repo-ask-mark.svg" alt="repo-ask mark: lines of code with a citation bracket around the two that answer the question" width="112" />
+</p>
 
-`repo-ask` is a small command-line tool that answers questions about a codebase and backs every
-answer with `file:start-end` citations. It splits the repo into function- and class-level chunks
-with tree-sitter and retrieves the most relevant ones with BM25 plus ripgrep. Claude answers from
-those chunks only, and every citation is checked against the chunks that were actually retrieved.
-If there is no supported answer it prints `Not found in this repo` instead of guessing. The whole
-tool is about 670 lines of Python plus about 460 lines of tests.
+<h1 align="center">repo-ask</h1>
 
-Built with [Claude Code](https://claude.com/claude-code) as a pair programmer: Claude Code wrote
-most of the code, tests and evaluation questions to my specification.
+<p align="center">
+  <strong>Ask any codebase a question. Get an answer with <code>file:line</code> citations, or an honest "not found".</strong>
+</p>
 
-## Install
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python 3.11+" />
+  <img src="https://img.shields.io/badge/Claude-API-D97757?style=flat&logo=anthropic&logoColor=white" alt="Claude API" />
+  <img src="https://img.shields.io/badge/tree--sitter-chunks-1F6FEB?style=flat" alt="tree-sitter chunks" />
+  <img src="https://img.shields.io/badge/BM25-%2B%20ripgrep-6E40C9?style=flat" alt="BM25 plus ripgrep" />
+  <a href="https://github.com/iamsohungrynow/repo-ask/actions/workflows/ci.yml"><img src="https://github.com/iamsohungrynow/repo-ask/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/License-MIT-2E7D5B?style=flat" alt="MIT licence" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/citations-validated-000000?style=flat" alt="Every citation is validated" />
+  <img src="https://img.shields.io/badge/held--out%20answers-8%2F10-000000?style=flat" alt="Held-out answer accuracy 8 of 10" />
+  <img src="https://img.shields.io/badge/abstention-5%2F5-000000?style=flat" alt="Abstention 5 of 5" />
+  <img src="https://img.shields.io/badge/vector%20DB-none-000000?style=flat" alt="No vector database" />
+</p>
+
+repo-ask is a small command-line tool for finding your way around an unfamiliar repository. It
+splits the code into **one chunk per function or class** with tree-sitter, retrieves the most
+relevant chunks with **BM25 plus ripgrep**, and asks **Claude** to answer from those chunks only.
+
+Every citation is then checked against what was actually retrieved, so the tool never shows a
+reference it did not read. If no citation survives, it prints `Not found in this repo` instead of
+guessing. There is no server and no vector database: it is about 700 lines of Python, and the index
+is a JSON file in your cache folder, never in your repo.
+
+<p align="center">
+  <img src="./docs/assets/terminal.svg" alt="Terminal: repo-ask answers a question about Soliton with two citations in engine/memory/runner.mjs, then replies 'Not found in this repo' to a question about a Kafka consumer that does not exist" width="100%" />
+</p>
+
+<p align="center"><sub>Real output on <a href="https://github.com/iamsohungrynow/Soliton">Soliton</a> at commit <code>9f01a58</code>.</sub></p>
+
+## What works today
+
+**Measured** on Soliton, a TypeScript/JavaScript codebase of about 280 files, on 2026-09-27
+([full write-up](docs/evaluation.md)):
+
+| Question set | hit@6 (file) | hit@6 (lines) | Answer accuracy | Abstention | Avg latency |
+| --- | --- | --- | --- | --- | --- |
+| Held-out, 10 + 2, never tuned on | 9/10 (90%) | 9/10 (90%) | **8/10 (80%)** | **2/2** | 3.12 s |
+| Development, 20 + 3 | 18/20 (90%) | 13/20 (65%) | 13/20 (65%) | 3/3 | 3.29 s |
+
+Also checked: **0 rejected citations and 0 errors** across both runs. On the development set,
+every question whose retrieved chunks contained the answer was answered correctly, so accuracy is
+limited by retrieval, not by the model. The sets are small and were drafted with Claude Code, so
+read these numbers as indicative.
+
+- **Cited answers:** each answer starts with the `path:start-end` ranges that support it.
+- **No guessing:** a reply with no citation inside the retrieved code becomes `Not found in this repo`.
+- **Any local checkout:** only the 6 retrieved chunks are sent to the Claude API, and in a git
+  repo anything `.gitignore` excludes, such as `.env`, is never indexed.
+- **Scripts and editors:** `--json` prints `{found, answer, citations, rejected}`.
+- **Measurable:** `repo-ask eval` scores retrieval and answers against your own questions, with or
+  without an API key.
+
+Not yet: incremental re-indexing, citations that span two chunks, embeddings. See the [roadmap](#roadmap).
+
+## Quickstart
+
+You need Python 3.11+, an [Anthropic API key](https://console.anthropic.com/), and optionally
+[ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) on your `PATH`.
+
+```bash
+pipx install git+https://github.com/iamsohungrynow/repo-ask
+```
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Then, from inside any repository:
+
+```bash
+repo-ask index .
+```
+
+```bash
+repo-ask ask "how are database migrations run?"
+```
+
+`ask` builds the index on first use if you skip `index`. Re-run `repo-ask index .` after the code
+changes.
+
+## Usage
+
+| Command | What it does |
+| --- | --- |
+| `repo-ask index <repo>` | Chunk the repository and save the index. |
+| `repo-ask ask "<question>" [--repo PATH]` | Answer a question about `PATH` (default: the current directory). |
+| `repo-ask eval <file.yaml> --repo PATH` | Score retrieval and answers against a question set. |
+
+| Flag | Command | Effect |
+| --- | --- | --- |
+| `--show-chunks` | `ask` | Print the retrieved chunks to stderr, to see what the answer is based on. |
+| `--json` | `ask` | Print `{found, answer, citations, rejected}` as JSON. |
+| `--model ID` | `ask`, `eval` | Use a different Claude model for this run. |
+| `--retrieval-only` | `eval` | Skip the model: score retrieval only, no API key needed. |
+| `--no-bm25`, `--no-rg`, `--bm25-b` | `eval` | Ablations and tuning for the retriever. |
+| `--out FILE` | `eval` | Write per-question results as JSON. |
+
+| Environment variable | Default | Purpose |
+| --- | --- | --- |
+| `ANTHROPIC_API_KEY` | required for `ask` and `eval` | Read from the environment only; never commit it. |
+| `REPO_ASK_MODEL` | `claude-sonnet-5` | Claude model used to answer. `--model` overrides it. |
+| `REPO_ASK_HOME` | `~/.cache/repo-ask` | Where indexes are stored. Nothing is written into the indexed repo. |
+
+**Languages.** Function- and class-level chunks for **Python, JavaScript, TypeScript (incl.
+JSX/TSX), Rust and Java**. Every other text file (Go, C, Markdown, YAML, config, ...) is indexed in
+80-line windows, so questions about it still work, with coarser citations. Vendored and generated
+files (`node_modules`, `dist`, lockfiles, minified JS, binaries) are skipped, and so is anything
+`.gitignore` excludes. To add a language,
+install its `tree-sitter-<lang>` package and add its suffix and definition node types to
+[`repo_ask/chunker.py`](repo_ask/chunker.py).
+
+## How it works
+
+<p align="center">
+  <img src="./docs/assets/pipeline.svg" alt="Pipeline. Index once: your repo, tree-sitter makes one chunk per function, saved to an index in ~/.cache/repo-ask. Every question: BM25 over the index and ripgrep over the files, fused with reciprocal rank fusion into the top 6 chunks; Claude answers from them only; the citation check keeps citations inside a retrieved chunk, giving an answer with path:start-end, or Not found in this repo." width="100%" />
+</p>
+
+1. **Chunk.** tree-sitter makes one chunk per function or class, with its doc comment attached.
+   Definitions over 150 lines are split into their methods, and lines outside any definition become
+   windows, so every line belongs to exactly one chunk.
+2. **Retrieve.** BM25 handles natural-language questions; the tokenizer splits `camelCase` and
+   `snake_case`, so "fallback recall" matches `fallbackRecallFromRecords`. ripgrep handles pasted
+   identifiers and ranks definitions above usages. Reciprocal rank fusion merges the two rankings
+   without score calibration, and docs are capped at 2 of the 6 slots so code is not crowded out.
+3. **Answer.** Claude gets the numbered chunks and must reply in a JSON schema: `answer`,
+   `citations`, `found`.
+4. **Validate.** A citation survives only if its whole range lies inside one retrieved chunk. No
+   survivor means `Not found in this repo`; rejected citations are reported on stderr.
+
+Why each choice was made, and how it would scale to a large monorepo:
+[`docs/design.md`](docs/design.md).
+
+## Evaluate it on your own repo
+
+Write a few questions you already know the answers to:
+
+```yaml
+questions:
+  - id: q1
+    question: Where are the model's citations checked against the retrieved chunks?
+    expected:
+      - {path: repo_ask/answer.py, lines: [145, 154]}   # any overlapping range counts
+  - id: u1
+    question: Where does the web server check the user's password?
+    answerable: false                                   # must reply "Not found in this repo"
+```
+
+```bash
+repo-ask eval examples/questions.yaml --repo . --retrieval-only
+```
+
+[`examples/questions.yaml`](examples/questions.yaml) is a commented starter file that runs on this
+repo as-is. Per question, the report shows whether an expected file and an expected line range were
+among the 6 retrieved chunks (`hit@6`). Without `--retrieval-only`, it also shows whether the answer
+cited the right place and whether unanswerable questions were declined.
+
+## Architecture
+
+```
+repo_ask/
+  chunker.py    tree-sitter chunks: one per function/class, line windows for everything else
+  index.py      build, save and load the index (JSON, under $REPO_ASK_HOME)
+  retriever.py  BM25 + ripgrep, reciprocal rank fusion, the docs cap
+  answer.py     prompt, JSON schema, one retry, citation validation
+  evaluate.py   hit@6, answer and abstention accuracy, latency, the report
+  cli.py        repo-ask index | ask | eval
+tests/          unit tests with fake API clients: no key needed
+eval/           Soliton question sets and per-question results
+examples/       a starter question file for your own repo
+docs/           design notes, the evaluation write-up, images
+```
+
+## Development
 
 ```bash
 git clone https://github.com/iamsohungrynow/repo-ask && cd repo-ask
-pip install -e ".[dev]"          # Python 3.11+; ripgrep (`rg`) on PATH is recommended
-export ANTHROPIC_API_KEY=...     # read from this variable only; never commit it (.env is gitignored)
-export REPO_ASK_MODEL=claude-sonnet-5   # optional; this is the default
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
 pytest
 ```
 
-The index is written to `~/.cache/repo-ask/` (override with `REPO_ASK_HOME`), never into the
-repository being indexed.
+CI runs the tests on Python 3.11, 3.12 and 3.13. If you change retrieval, include before and after
+`repo-ask eval` numbers in the pull request.
 
-## Examples
+## Roadmap
 
-All output below is real, from Soliton at commit `9f01a58`, run on 2026-09-27.
+Ordered by what the evaluation showed matters most.
 
-```text
-$ repo-ask index ../soliton
-Indexed 2269 chunks from 279 files -> ~/.cache/repo-ask/soliton-d8a19ba1fd.json
-```
-(The index path is shortened; the run used a custom `REPO_ASK_HOME`.)
+| Next | Why | Done when |
+| --- | --- | --- |
+| **Down-weight path tokens** | small `api/admin/users/...` handlers outrank `isAdminUser` (q17, q18, h07) | q17 and q18 hit with no held-out loss |
+| **Carry module constants into chunks** | a function is retrieved without the constant it reads (h01) | h01 answers "10 minutes" |
+| **Citations across adjacent chunks** | a correct answer spanning two chunks is rejected | a two-chunk citation validates |
+| **Incremental indexing** | the whole repo is re-chunked after every change | re-indexing touches only changed files |
 
-```text
-$ repo-ask ask "where does the runner fall back to keyword recall?" --repo ../soliton --show-chunks
-  retrieved supabase/config.toml:401-414
-  retrieved engine/memory/runner.mjs:616-644 recallRunnerTaskMemory
-  retrieved legacy/openclaw-runtime/server/custom-server.js:15-34 standaloneConfig
-  retrieved docs/implementation/sui-walrus-build-plan.md:561-639
-  retrieved engine/memory/runner.mjs:187-199 recallMemWalMemory
-  retrieved engine/memory/runner.mjs:576-584 taskRecallQuery
-engine/memory/runner.mjs:616-644
-engine/memory/runner.mjs:187-199
-  In `recallRunnerTaskMemory`, if the MemWal recall call fails or is unavailable, the catch block returns an empty array, and the function then merges results with `indexedProjectMemories`, which serves as the keyword/indexed fallback for recall data (built from the task's title, kind, and payload via `taskRecallQuery`).
-```
-
-The `retrieved` lines come from `--show-chunks`. The answer itself is the validated citations
-followed by the indented answer, or `Not found in this repo`.
-
-```text
-$ repo-ask eval eval/soliton.yaml --repo ../soliton --out eval/results/2026-09-27-full.json
-id   hit@6  lines  answer   latency  question
-q01  yes    yes    yes        3.74s  Where is the memory recall API route?
-...
-q17  no     no     no         2.73s  How does the app decide whether a user is an admin?
-...
-u1   -      -      yes        2.30s  Where does the Kafka consumer process trade events?
-...
-retrieval hit@6 (file):   18/20 = 90%
-retrieval hit@6 (lines):  13/20 = 65%
-answer accuracy:          13/20 = 65%
-abstention accuracy:      3/3 = 100%
-rejected citations:       0
-errors:                   0
-average latency:          3.29 s
-```
-
-Add `--retrieval-only` to skip the answer step and run without an API key.
-
-## Evaluation
-
-The target is [Soliton](https://github.com/iamsohungrynow/Soliton), commit `9f01a58`, cloned
-read-only. The eval file [`eval/soliton.yaml`](eval/soliton.yaml) has 20 answerable questions with
-expected files and line ranges, plus 3 questions that have no answer in the repo. Questions 1-5
-are the seed questions; 6-20 were drafted with Claude Code by reading the code. Every expected
-range in both eval sets was checked against the code: it answers its question and starts and ends
-on the definition it names. Two questions accept a second location (marked `also`). A separate
-held-out set is described [below](#held-out-set).
-
-- **hit@6 (file)**: an expected file is among the 6 retrieved chunks.
-- **hit@6 (lines)**: a retrieved chunk overlaps an expected line range, which is stricter.
-- **answer accuracy**: the answer has a validated citation in an expected file that overlaps the
-  expected lines.
-- **abstention accuracy**: the 3 unanswerable questions get `Not found in this repo`.
-
-Run on 2026-09-27 (per-question results in [`eval/results/`](eval/results/)):
-
-| Configuration | hit@6 (file) | hit@6 (lines) | Answer accuracy | Abstention | Avg latency |
-|---|---|---|---|---|---|
-| **Hybrid: BM25 + ripgrep (default)** | **18/20 (90%)** | **13/20 (65%)** | **13/20 (65%)** | **3/3 (100%)** | **3.29 s** |
-| BM25 only (`--no-rg`) | 18/20 (90%) | 14/20 (70%) | – | – | – |
-| ripgrep only (`--no-bm25`) | 2/20 (10%) | 0/20 (0%) | – | – | – |
-
-The answer, abstention and latency columns come from the full run,
-`repo-ask eval eval/soliton.yaml --repo ../soliton --out eval/results/2026-09-27-full.json`, which
-printed `rejected citations: 0` and `errors: 0`. Every question whose retrieved chunks overlapped
-the expected lines was answered correctly, and none of the others was. So on this set, answer
-accuracy is limited by retrieval, not by the model. The ablation rows are retrieval-only, so they
-have no answer columns.
-
-**Re-checked on 2026-10-31**, after file listing switched to `git ls-files` so gitignored files are
-skipped. A fresh clone of Soliton at `9f01a58` gives a byte-identical index (2269 chunks from 279
-files), and all six retrieval-only runs (both eval sets, all three configurations) retrieve the
-same chunks for every question as the files in [`eval/results/`](eval/results/). The answer,
-abstention and latency columns were not re-run; the model would see the same retrieved chunks.
-
-**How these numbers were reached.** The questions were committed before any tuning (commit
-`6319687`). Two changes were then made after looking at results on this same set, so the numbers
-above are optimistic; the held-out set below is the check on that.
-
-| Stage | Hybrid file | Hybrid lines |
-|---|---|---|
-| First version | 14/20 | 11/20 |
-| + a function's doc comment is kept in its chunk (it was being split into a separate window) | 14/20 | 12/20 |
-| + ripgrep only fires on real identifiers (camelCase, snake_case, backticked) | 18/20 | 13/20 |
-
-The first version also treated any word that matched a symbol name as an identifier. Plain words
-like "project" (in 144 chunks) and "prompt" (65) then became ripgrep searches with arbitrary matches, and
-the hybrid scored *worse* than BM25 alone. On this eval set ripgrep still adds nothing: only 2 of
-the 20 questions contain an identifier. On q04 ("MemWal") it pushes the defining chunk out of the
-top 6, because `MemWal` appears in 76 chunks. The unit tests show the case where it does
-help: an identifier query returns the defining chunk first.
-
-### Held-out set
-
-[`eval/soliton-heldout.yaml`](eval/soliton-heldout.yaml) has 10 answerable and 2 unanswerable
-questions about parts of Soliton the development set does not touch (Sui wallet challenges, the
-Walrus HTTP store, memory branches and commit graphs, the auth proxy, onboarding, wiki attachments,
-token quota events). It was written after all the tuning above and committed before it was first
-run, and nothing has been tuned on it since.
-
-| Configuration | hit@6 (file) | hit@6 (lines) | Answer accuracy | Abstention | Avg latency |
-|---|---|---|---|---|---|
-| **Hybrid: BM25 + ripgrep (default)** | **9/10 (90%)** | **9/10 (90%)** | **8/10 (80%)** | **2/2 (100%)** | **3.12 s** |
-| BM25 only (`--no-rg`) | 9/10 (90%) | 9/10 (90%) | – | – | – |
-| ripgrep only (`--no-bm25`) | 0/10 (0%) | 0/10 (0%) | – | – | – |
-
-The full run, `repo-ask eval eval/soliton-heldout.yaml --repo ../soliton --out
-eval/results/2026-09-27-heldout-full.json`, printed `rejected citations: 0` and `errors: 0`.
-Retrieval held up: file hit@6 is the same as on the development set. The line score is higher (90%
-against 65%), but that more likely means these questions are easier than that retrieval
-generalises better. They were drafted with Claude Code by someone who knew how the retriever
-works, so their wording follows the code closely.
-
-The two wrong answers fail in different ways:
-
-- **h07** ("which onboarding step a user still has to complete") is a retrieval miss, the same
-  pattern as q17. The model cited the page that calls `getRequiredOnboardingStep`, not the function
-  that makes the decision.
-- **h01** ("how long is a Sui wallet challenge valid") retrieved the right function, which computes
-  `Date.now() + WALLET_CHALLENGE_TTL_MS`. The constant's value, 10 minutes, is defined on line 7,
-  outside the retrieved chunk, so the model replied `Not found in this repo` instead of guessing.
-  That is the intended behaviour, but it shows a gap: a chunk does not carry the module-level
-  constants it uses.
-
-**A tried fix that did not work.** q17 and q18 looked like a short-chunk bias, so BM25 length
-normalisation was made configurable (`--bm25-b`, default 0.75) and swept on the development set
-only:
-
-| BM25 `b` | 1.0 | 0.9 | **0.75** | 0.6 | 0.5 | 0.4 | 0.3 | 0.2 | 0 |
-|---|---|---|---|---|---|---|---|---|---|
-| Hybrid file | 18/20 | 18/20 | **18/20** | 16/20 | 15/20 | 15/20 | 14/20 | 14/20 | 10/20 |
-| Hybrid lines | 12/20 | 13/20 | **13/20** | 12/20 | 12/20 | 12/20 | 11/20 | 11/20 | 8/20 |
-
-No value is better than the default, and q17 and q18 miss at every value, so the default stays.
-The real cause is different: the question's words ("admin", "user") are also in the paths and
-symbol names of many small admin route handlers (`src/app/api/admin/users/...`), and path and
-symbol are counted twice, so those chunks outrank `isAdminUser` whatever their length.
-
-## Design choices
-
-**Function-level chunks.** A function or class is the unit engineers ask about and cite. Fixed
-windows cut functions in half, so the model sees half the logic and cites ranges that don't match
-the code. Chunks also carry a symbol name, which is a strong retrieval signal. Definitions longer
-than 150 lines are split into their nested definitions (in Java: class into methods). Lines outside
-any definition, such as imports, config objects and non-code files, become 80-line windows, so
-every non-blank line belongs to exactly one chunk. That matters for citation checking.
-
-**Hybrid retrieval.** BM25 handles natural-language questions ("how is a wiki slug generated").
-The tokenizer splits `fallbackRecallFromRecords` into its words, so the question and the code share
-vocabulary. ripgrep handles the exact-identifier case, where an engineer pastes a name and wants its
-definition. It is exact, needs no index, and ranks definition sites above usages. The two rankings
-are merged with reciprocal rank fusion, `sum(1 / (60 + rank))`, which needs no score calibration.
-Prose files are capped at 2 of the 6 slots, because docs mention everything and crowded out code.
-Embeddings would be one more ranker (`extra_rankers`). They are off because they add a model
-dependency, and the ablation above does not yet show a retrieval gap they would clearly close.
-
-**Validated citations.** The model returns JSON (`answer`, `citations`, `found`), constrained by
-the API's structured-output schema. The reply is parsed and shape-checked anyway, with one retry.
-A citation is kept only if its whole range lies inside a single retrieved chunk. If `found` is
-false, or no citation survives, the tool prints `Not found in this repo`. An answer is never shown
-without evidence the tool itself retrieved, which makes the "don't guess" rule checkable instead of
-a prompt instruction the model may ignore. Rejected citations are reported on stderr.
-
-## Limitations
-
-- **Common words in paths drown out the right function.** Small route handlers whose paths repeat
-  the question's words ("admin", "user") outrank the one function that answers it (q17, q18, h07).
-  Changing BM25 length normalisation does not help (see the sweep above). Down-weighting path
-  tokens might, but it has not been tried.
-- **Only files are evaluated, not answer text.** A citation in the right place with a wrong
-  explanation still counts as correct.
-- **A citation is valid only if it fits in one chunk.** A correct answer spanning two adjacent
-  chunks is rejected.
-- **The index is never refreshed.** Re-run `repo-ask index` after the code changes. There is no
-  incremental update.
-- **The stemmer is naive** (`walrus` becomes `walru`). This is consistent between queries and
-  documents, but crude.
-- **The eval sets are small.** 20 + 3 development and 10 + 2 held-out questions from one repo,
-  drafted with Claude Code rather than collected from real users.
-- **Chunks lack the constants they use.** A function that reads a module-level constant is
-  retrieved without the constant's value (h01).
-
-## Scaling to a large Java monorepo, and measuring whether it helps
-
-- **Indexing.** Incremental re-indexing keyed on git blob hashes, run in CI on merge. Per-module
-  shards so a question can be scoped to a service. Java chunks carry the package, class, method
-  signature and annotations (for example `@RestController` or `@Transactional`).
-- **Retrieval.** At that size BM25 needs a proper engine (Lucene or OpenSearch), with symbol and
-  signature fields boosted. The ripgrep step becomes a symbol index (ctags, SCIP or LSIF), so
-  "where is X defined, who calls X" is a lookup and not a text search. Embeddings earn their cost
-  there, as a third ranker for paraphrased questions. Identifiers that appear in thousands of files
-  get IDF-style down-weighting (the q04 lesson above).
-- **Eval first.** Build a question set from real internal questions (chat threads, onboarding
-  docs, code-review comments), split into dev and held-out halves. Report held-out numbers only.
-- **Measuring whether engineers get unblocked faster:**
-  - *Answer acceptance rate*: the share of answers where the engineer opened a cited file and did
-    not re-ask or escalate.
-  - *Time to first correct file*: from question to opening the file they eventually edit, compared
-    with a control group using code search.
-  - *Time from first question to merged PR*, for onboarding tasks and small bug fixes.
-  - *"Not found" precision*: how often a human confirms it really isn't in the repo. A wrong
-    "not found" costs trust as much as a wrong answer.
-
-  These would come from opt-in CLI or IDE telemetry and an A/B rollout, not from a survey.
+Known failure modes and the experiments behind them are in
+[`docs/evaluation.md`](docs/evaluation.md).
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE).
+MIT ([`LICENSE`](LICENSE)).

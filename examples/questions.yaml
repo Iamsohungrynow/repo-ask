@@ -1,0 +1,42 @@
+# A starter eval file. Copy it, point the questions at your own repo, and run:
+#
+#   repo-ask eval examples/questions.yaml --repo . --retrieval-only   # no API key needed
+#   repo-ask eval examples/questions.yaml --repo .                    # also scores the answers
+#
+# These questions are about repo-ask itself, so the file runs as-is from this checkout.
+# Line ranges go stale when the code changes, so pin the commit you wrote them against.
+#
+# Fields:
+#   id          short label printed in the report
+#   question    asked exactly as written
+#   expected    every location that counts as a correct answer: a path relative to the repo root
+#               and an inclusive [start, end] line range. A retrieved chunk or citation is a hit
+#               if it overlaps any of these ranges.
+#   answerable  set to false for questions with no answer in the repo; the tool must then reply
+#               "Not found in this repo" (default: true)
+
+questions:
+  - id: q1
+    question: Where are the model's citations checked against the retrieved chunks?
+    expected:
+      - {path: repo_ask/answer.py, lines: [145, 154]}  # validate_citations
+
+  - id: q2
+    question: How are the BM25 and ripgrep rankings combined into one result list?
+    expected:
+      - {path: repo_ask/retriever.py, lines: [78, 93]}  # Retriever.search, reciprocal rank fusion
+
+  - id: q3
+    question: Where is the index file stored on disk?
+    expected:
+      - {path: repo_ask/index.py, lines: [14, 18]}  # index_path
+
+  - id: q4
+    question: Which directories are skipped when walking a repository?
+    expected:
+      - {path: repo_ask/chunker.py, lines: [21, 21]}  # SKIP_DIRS
+      - {path: repo_ask/chunker.py, lines: [66, 82]}  # iter_files
+
+  - id: u1
+    question: Where does the web server check the user's password?
+    answerable: false

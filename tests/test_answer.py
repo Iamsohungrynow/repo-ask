@@ -64,6 +64,16 @@ def test_found_answer_renders_citations_then_answer():
     assert answer.render() == "engine/memory/runner.mjs:616-644\n  Recalls up to 5 memories."
 
 
+def test_to_dict_is_json_ready():
+    answer = answer_question("How many memories?", CHUNKS, client=FakeClient(reply()), model="m")
+    assert json.loads(json.dumps(answer.to_dict())) == {
+        "found": True,
+        "answer": "Recalls up to 5 memories.",
+        "citations": [{"path": "engine/memory/runner.mjs", "start_line": 616, "end_line": 644}],
+        "rejected": [],
+    }
+
+
 def test_found_false_prints_not_found():
     answer = answer_question("Kafka?", CHUNKS, client=FakeClient(reply(found=False, citations=())), model="m")
     assert not answer.found and answer.render() == NOT_FOUND
