@@ -100,6 +100,12 @@ the expected lines was answered correctly, and none of the others was. So on thi
 accuracy is limited by retrieval, not by the model. The ablation rows are retrieval-only, so they
 have no answer columns.
 
+**Re-checked on 2026-10-31**, after file listing switched to `git ls-files` so gitignored files are
+skipped. A fresh clone of Soliton at `9f01a58` gives a byte-identical index (2269 chunks from 279
+files), and all six retrieval-only runs (both eval sets, all three configurations) retrieve the
+same chunks for every question as the files in [`eval/results/`](eval/results/). The answer,
+abstention and latency columns were not re-run; the model would see the same retrieved chunks.
+
 **How these numbers were reached.** The questions were committed before any tuning (commit
 `6319687`). Two changes were then made after looking at results on this same set, so the numbers
 above are optimistic; the held-out set below is the check on that.
