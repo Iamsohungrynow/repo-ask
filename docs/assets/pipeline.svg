@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 316" width="1180" height="316">
+  <!-- How repo-ask answers a question. Paper background so it reads in GitHub light and dark mode. -->
+  <defs><marker id="m000" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#000"/></marker><marker id="m2E7D5B" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#2E7D5B"/></marker><marker id="mB7791F" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#B7791F"/></marker></defs>
+  <rect width="1180" height="316" rx="12" fill="#F2F0E4"/>
+  <text x="20" y="32" text-anchor="start" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.5" fill="#6B655C">INDEX ONCE</text>
+  <rect x="20" y="44" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="100.0" y="70.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">Your repo</text>
+  <text x="100.0" y="89.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">any local checkout</text>
+  <rect x="216" y="44" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="296.0" y="70.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">tree-sitter</text>
+  <text x="296.0" y="89.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">one chunk per function</text>
+  <rect x="412" y="44" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="492.0" y="70.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">Index</text>
+  <text x="492.0" y="89.0" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#4A4640">~/.cache/repo-ask</text>
+  <path d="M180 74 H212" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M376 74 H408" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <text x="20" y="160" text-anchor="start" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.5" fill="#6B655C">EVERY QUESTION</text>
+  <rect x="20" y="196" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="100.0" y="222.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">Question</text>
+  <text x="100.0" y="241.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">words or an identifier</text>
+  <rect x="216" y="172" width="160" height="44" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="296.0" y="199.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">BM25</text>
+  <rect x="216" y="236" width="160" height="44" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="296.0" y="263.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">ripgrep</text>
+  <rect x="412" y="196" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="492.0" y="222.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">Fuse (RRF)</text>
+  <text x="492.0" y="241.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">top 6 chunks</text>
+  <rect x="608" y="196" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
+  <text x="688.0" y="222.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#000">Claude</text>
+  <text x="688.0" y="241.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">answers from them only</text>
+  <rect x="804" y="196" width="160" height="60" rx="6" fill="#FFFFFF" stroke="#D97757" stroke-width="2"/>
+  <text x="884.0" y="222.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#D97757">Citation check</text>
+  <text x="884.0" y="241.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">inside a retrieved chunk?</text>
+  <rect x="1000" y="160" width="160" height="56" rx="6" fill="#FFFFFF" stroke="#2E7D5B" stroke-width="2"/>
+  <text x="1080.0" y="184.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#2E7D5B">Answer</text>
+  <text x="1080.0" y="203.0" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#4A4640">+ path:start-end</text>
+  <rect x="1000" y="240" width="160" height="56" rx="6" fill="#FFFFFF" stroke="#B7791F" stroke-width="2"/>
+  <text x="1080.0" y="264.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#B7791F">Not found</text>
+  <text x="1080.0" y="283.0" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#4A4640">in this repo</text>
+  <path d="M180 220 C198.0 220 198.0 194 212 194" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M180 232 C198.0 232 198.0 258 212 258" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M376 194 C394.0 194 394.0 220 408 220" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M376 258 C394.0 258 394.0 232 408 232" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M492.0 104 V138 H296.0 V168" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M572 226 H604" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M768 226 H800" fill="none" stroke="#000" stroke-width="2" marker-end="url(#m000)"/>
+  <path d="M964 214 C982.0 214 982.0 188 996 188" fill="none" stroke="#2E7D5B" stroke-width="2" marker-end="url(#m2E7D5B)"/>
+  <path d="M964 238 C982.0 238 982.0 268 996 268" fill="none" stroke="#B7791F" stroke-width="2" marker-end="url(#mB7791F)"/>
+  <text x="982.0" y="176" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="0" fill="#2E7D5B">valid</text>
+  <text x="982.0" y="290" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="0" fill="#B7791F">none</text>
+</svg>
